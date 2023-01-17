@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "365158998838",
+    "project_id": "cargo-bike",
+    "storage_bucket": "cargo-bike.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:365158998838:android:da3c20868c2a2466ab4997",
+        "android_client_info": {
+          "package_name": "com.example.application_cargo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "365158998838-9nv9n31mi24ou9bu0d551t9j5c7ttmp5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBuuBaYOOqzjQzLqeQIl6OSqzclKPCPb60"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "365158998838-9nv9n31mi24ou9bu0d551t9j5c7ttmp5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
