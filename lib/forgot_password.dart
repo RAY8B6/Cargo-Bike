@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:application_cargo/main.dart';
 
 class ForgotPasswordScreen extends StatelessWidget {
 
-  FirebaseAuth auth = FirebaseAuth.instance;
+  final supabase = Supabase.instance.client;
   User? user;
   TextEditingController emailController = TextEditingController();
 
@@ -98,9 +97,9 @@ class ForgotPasswordScreen extends StatelessWidget {
                 child: MaterialButton(
                   onPressed: () async {
                     try {
-                      await FirebaseAuth.instance.sendPasswordResetEmail(email: emailController.text);
+                      await supabase.auth.resetPasswordForEmail(emailController.text);
                       Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> const HomePage()));
-                    } on FirebaseAuthException catch (e) {
+                    } on AuthException catch (e) {
                       print(e);
                     }
                   },

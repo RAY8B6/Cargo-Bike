@@ -1,5 +1,5 @@
 import 'package:application_cargo/main.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/material.dart';
 
 class RegisterScreen extends StatelessWidget {
@@ -23,7 +23,21 @@ class RegisterScreen extends StatelessWidget {
         ),
       );
     } else {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(email: emailController.text, password: passwordController.text);
+      final supabase = Supabase.instance.client;
+      await supabase.auth.signUp(email: emailController.text, password: passwordController.text);
+      showDialog<String>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text("Succes"),
+          content: const Text("Account created !"),
+          actions: [
+            TextButton(
+                onPressed: () => Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> const HomePage())),
+                child: const Text("Ok"))
+
+          ],
+        ),
+      );
     }
   }
 
@@ -113,7 +127,7 @@ class RegisterScreen extends StatelessWidget {
                       color: Color(0xff000000),
                     ),
                     filled: true,
-					fillColor: const Color(0xffffffff),
+					          fillColor: const Color(0xffffffff),
                     isDense: false,
                     contentPadding:
                         const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
@@ -209,7 +223,7 @@ class RegisterScreen extends StatelessWidget {
                     isDense: false,
                     contentPadding:
                         const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-					prefixIcon: const Icon(Icons.lock,
+					              prefixIcon: const Icon(Icons.lock,
                         color: Color(0xff212435), size: 24),
                   ),
                 ),
@@ -252,7 +266,7 @@ class RegisterScreen extends StatelessWidget {
                       overflow: TextOverflow.clip,
                       style: TextStyle(
                         fontWeight: FontWeight.w400,
-						fontStyle: FontStyle.normal,
+						            fontStyle: FontStyle.normal,
                         fontSize: 14,
                         color: Color(0xff000000),
                       ),

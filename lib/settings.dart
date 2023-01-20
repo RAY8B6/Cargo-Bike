@@ -1,7 +1,7 @@
 import 'package:application_cargo/dashboard.dart';
 import 'package:application_cargo/main.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SettingsPage extends StatelessWidget{
   @override

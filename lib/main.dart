@@ -2,10 +2,10 @@ import 'package:application_cargo/RegisterScreen.dart';
 import 'package:application_cargo/dashboard.dart';
 import 'package:application_cargo/forgot_password.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-void main() {
+Future<void> main() async {
+
   runApp(const MyApp());
 }
 
@@ -29,17 +29,22 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
 
-  //Initialize Firebase App
-  Future<FirebaseApp> _initializeFirebase() async {
-    FirebaseApp firebaseApp = await Firebase.initializeApp();
-    return firebaseApp;
+  //Initialize Supabase App
+  Future<SupabaseClient> _initializeSupabase() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    await Supabase.initialize(
+        url: "https://eizvcrbyrkfwzqeobqwm.supabase.co",
+        anonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVpenZjcmJ5cmtmd3pxZW9icXdtIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NzM5NjEzODksImV4cCI6MTk4OTUzNzM4OX0.aTojsRh_3iNN4IN_6VAOy8rfS7IHKmxxBuC06G6LzkE"
+    );
+    final supabase = Supabase.instance.client;
+    return supabase;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: FutureBuilder(
-          future: _initializeFirebase(),
+          future: _initializeSupabase(),
           builder: (context, snapshot) {
             if(snapshot.connectionState == ConnectionState.done) {
               return LoginScreen();
@@ -63,15 +68,19 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen>{
 
+
   //Login function
-  static Future<User?> loginUsingEmailPassword({required String email, required String password, required BuildContext context}) async{
-    FirebaseAuth auth = FirebaseAuth.instance;
-    User? user;
+  static Future<bool> loginUsingEmailPassword({required String email, required String password, required BuildContext context}) async{
+    final supabase = Supabase.instance.client;
+    bool login = false;
     try{
-      UserCredential userCredential = await auth.signInWithEmailAndPassword(email: email, password: password);
-      user = userCredential.user;
-    } on FirebaseAuthException catch (e){
-      if(e.code == "user-not-found"){
+      await supabase.auth.signInWithPassword(
+          email: email,
+          password: password
+      );
+      login = true;
+    } on AuthException catch (e){
+      if(e.message == "user-not-found"){
         showDialog<String>(
             context: context,
             builder: (BuildContext context) => AlertDialog(
@@ -85,7 +94,7 @@ class _LoginScreenState extends State<LoginScreen>{
             ),
         );
       }
-      if(e.code == "wrong-password"){
+      if(e.message == "wrong-password"){
         showDialog<String>(
           context: context,
           builder: (BuildContext context) => AlertDialog(
@@ -99,9 +108,10 @@ class _LoginScreenState extends State<LoginScreen>{
           ),
         );
       }
+      print(e.message);
     }
 
-    return user;
+    return login;
   }
 
   @override
@@ -187,8 +197,9 @@ class _LoginScreenState extends State<LoginScreen>{
                   borderRadius: BorderRadius.circular(12.0),
                 ),
                 onPressed: () async {
-                  User? user = await loginUsingEmailPassword(email: emailController.text, password: passwordController.text, context: context);
-                  if(user != null) {
+                  bool login = await loginUsingEmailPassword(email: emailController.text, password: passwordController.text, context: context);
+                  print(login);
+                  if(login == true) {
                     Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> DashboardScreen()));
                   }
                 },

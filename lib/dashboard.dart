@@ -1,8 +1,9 @@
-import 'package:application_cargo/deliveryScreen.dart';
 import 'package:application_cargo/main.dart';
 import 'package:application_cargo/settings.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+import 'startDeliveryScreen.dart';
 
 class DashboardScreen extends StatefulWidget{
   const DashboardScreen({Key? key}) : super(key: key);
@@ -13,7 +14,7 @@ class DashboardScreen extends StatefulWidget{
 
 class _DashboardScreenState extends State<DashboardScreen>{
 
-  FirebaseAuth auth = FirebaseAuth.instance;
+  final supabase = Supabase.instance.client;
   User? user;
 
   //Dashboard items
@@ -46,7 +47,7 @@ class _DashboardScreenState extends State<DashboardScreen>{
 
             }
             if(index==1){
-              Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> DeliveryScreen()));
+              Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> DeliveryPage()));
             }
             if(index==2){
 
@@ -97,7 +98,7 @@ class _DashboardScreenState extends State<DashboardScreen>{
         leading: InkWell(
           child: const Icon(Icons.logout, color: Colors.white,),
           onTap: (){
-            auth.signOut();
+            supabase.auth.signOut();
             showDialog<String>(
               context: context,
               builder: (BuildContext context) => AlertDialog(
