@@ -1,9 +1,12 @@
 import 'package:application_cargo/main.dart';
+import 'package:application_cargo/map/home_map.dart';
 import 'package:application_cargo/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'startDeliveryScreen.dart';
+
+import 'package:permission_handler/permission_handler.dart';
 
 class DashboardScreen extends StatefulWidget{
   const DashboardScreen({Key? key}) : super(key: key);
@@ -42,9 +45,14 @@ class _DashboardScreenState extends State<DashboardScreen>{
           ],
         ),
         child: InkWell(
-          onTap: (){
+          onTap: () async {
             if(index==0){
+              print("coucou");
+              await Permission.locationWhenInUse.request();
 
+              if (await Permission.locationWhenInUse.request().isGranted){
+                Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> Home_Map(title: "Map")));
+              }
             }
             if(index==1){
               Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> DeliveryPage()));
