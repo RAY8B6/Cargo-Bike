@@ -6,6 +6,8 @@ import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
 
 import 'package:application_cargo/main.dart';
 
+import '../dashboard.dart';
+
 
 class Home_Map extends StatefulWidget {
   const Home_Map({super.key, required this.title});
@@ -53,6 +55,12 @@ class _Home_Map extends State<Home_Map> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
+            IconButton(
+                onPressed: (){
+                  Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> const DashboardScreen()));
+                },
+                icon: const Icon(Icons.arrow_back, color: Colors.white,),
+            ),
             IconButton(
                 onPressed: getLocation,
                 icon: const Icon(Icons.my_location, size: 30)
@@ -160,7 +168,7 @@ class _Home_Map extends State<Home_Map> {
           BottomAppBar(
               child: Row(
                 children: [
-                  Text("$distance stp: $step"),
+                  Text("$distance"),
                 ],
               )
           ),
@@ -196,7 +204,7 @@ class _Home_Map extends State<Home_Map> {
       }
     }*/
 
-    List<GeoPoint> tablGeo=[GeoPoint(latitude: 48.08534240722656, longitude: -0.755290150642395),GeoPoint(latitude: 48.8588897, longitude: 2.320041,),GeoPoint(latitude: 41.3608556, longitude: 2.1110075,)];
+    List<GeoPoint> tablGeo=[GeoPoint(latitude: 41.361912, longitude: 2.11422),GeoPoint(latitude: 41.379131, longitude: 2.12014,),GeoPoint(latitude: 41.40319, longitude: 2.17484,)];
 
     for (int i =0; i<tablGeo.length; i++){
       if (i==0){
@@ -221,12 +229,12 @@ class _Home_Map extends State<Home_Map> {
       end,
       roadType: RoadType.bike,
       roadOption: RoadOption(
-        roadColor: Colors.blue[(iteration+1)*300],
+        roadColor: Colors.red[(iteration+1)*300],
       ),
     );
 
     setState((){
-      distance="${roadInfo.distance.toString()}km and ${roadInfo.duration}s";
+      distance="${roadInfo.distance.toString()}km in ${roadInfo.duration}s";
     });
   }
 
