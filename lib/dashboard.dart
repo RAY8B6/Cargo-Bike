@@ -47,7 +47,6 @@ class _DashboardScreenState extends State<DashboardScreen>{
         child: InkWell(
           onTap: () async {
             if(index==0){
-              print("coucou");
               await Permission.locationWhenInUse.request();
 
               if (await Permission.locationWhenInUse.request().isGranted){
