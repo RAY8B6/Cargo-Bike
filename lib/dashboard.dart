@@ -50,7 +50,7 @@ class _DashboardScreenState extends State<DashboardScreen>{
               await Permission.locationWhenInUse.request();
 
               if (await Permission.locationWhenInUse.request().isGranted){
-                Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> Home_Map(title: "Map")));
+                Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> Home_Map(title: "Map", points: [],)));
               }
             }
             if(index==1){
