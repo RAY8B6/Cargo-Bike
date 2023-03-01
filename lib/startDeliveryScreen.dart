@@ -1,6 +1,7 @@
 import 'package:application_cargo/main.dart';
 import 'package:application_cargo/dashboard.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'map/home_map.dart';
@@ -15,6 +16,9 @@ class DeliveryPage extends StatefulWidget {
 }
 
 class _DeliveryPageState extends State<DeliveryPage> {
+
+  List<GeoPoint> points = [];
+
   final _future = Supabase.instance.client
       .from('deliveries')
       .select<List<Map<String, dynamic>>>();
@@ -64,12 +68,14 @@ class _DeliveryPageState extends State<DeliveryPage> {
                                     "\nPackages to deliver : ${delivery['nb_packages']}"
                                     "\nEstimated time : ${delivery['time']}"
                                     "\nTotal distance to travel : ${delivery['distance']}km"
+                                    //"\nAlgo: ${getAlgo(delivery["points"])}"
                                     "\nDifficulty: 3/5"),
                                     //"\nPoints : ${delivery['points']}"
                                     //"\nFirst Point : ${getPoint(1,delivery["points"])}"),
                                 onTap: () {
                                   setState(() {
                                     _selectedIndex = index;
+                                    points = BuildPoints(delivery["points"]);
                                   });
                                 },
                             ),
@@ -79,7 +85,7 @@ class _DeliveryPageState extends State<DeliveryPage> {
                         const SizedBox(height: 80.0),
                         MaterialButton(
                           onPressed: () {
-                            Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> Home_Map(title: "Map")));
+                            Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> Home_Map(title: "Map", points: points,)));
                           },
                           color: const Color(0xff3a57e8),
                           elevation: 0,
@@ -136,5 +142,15 @@ class _DeliveryPageState extends State<DeliveryPage> {
       return false;
     }
     return true;
+  }
+
+
+  List <GeoPoint> BuildPoints(List<dynamic> listpoint) {
+    List<GeoPoint> geo=[];
+
+    for (int i = 0; i<listpoint.length; i++){
+      geo.add(GeoPoint(latitude: listpoint[i][0], longitude: listpoint[i][1]));
+    }
+    return geo;
   }
 }

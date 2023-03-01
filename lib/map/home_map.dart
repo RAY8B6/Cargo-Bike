@@ -1,17 +1,18 @@
-import 'dart:collection';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
 
-import 'package:application_cargo/main.dart';
 
 import '../dashboard.dart';
 
+import 'package:flutter/services.dart';
+
 
 class Home_Map extends StatefulWidget {
-  const Home_Map({super.key, required this.title});
+  const Home_Map({super.key, required this.title, required this.points});
   final String title;
+  final List<GeoPoint> points;
 
   @override
   State<Home_Map> createState() => _Home_Map();
@@ -20,32 +21,26 @@ class Home_Map extends StatefulWidget {
 class _Home_Map extends State<Home_Map> {
 
   late MapController controller;
-
-  List<StaticPositionGeoPoint> markers=[
-    StaticPositionGeoPoint("places", const MarkerIcon(icon: Icon(Icons.location_on, size: 50,),),
-      [
-        GeoPoint(latitude: 10.0,longitude: 10.0),
-        GeoPoint(latitude: 48,longitude: 2)
-      ],
-    ),
-    StaticPositionGeoPoint("train", const MarkerIcon(icon: Icon(Icons.train, size: 50,),),
-      [
-        GeoPoint(latitude: 48.08534240722656, longitude: -0.755290150642395),
-        GeoPoint(latitude: 45.000001, longitude: 45.00001),
-      ],
-    ),
-  ];
+  List<StaticPositionGeoPoint> markers=[];
 
   @override
   void initState() {
     super.initState();
-    controller = MapController.cyclOSMLayer(
+    controller = MapController(
       initMapWithUserPosition: true,
     );
+    placemarkers();
   }
 
+  double distTotal=0;
+  double timeTotal=0;
+
   double step=4000;
-  String distance="Not yet";
+  String infosBarre="Not yet";
+
+  int currentPoint=1;
+
+  List points=[];
 
   @override
   Widget build(BuildContext context) {
@@ -56,35 +51,37 @@ class _Home_Map extends State<Home_Map> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             IconButton(
-                onPressed: (){
-                  Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> const DashboardScreen()));
-                },
-                icon: const Icon(Icons.arrow_back, color: Colors.white,),
+              onPressed: (){
+                Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> const DashboardScreen()));
+              },
+              icon: const Icon(Icons.arrow_back, color: Colors.white,),
             ),
             IconButton(
-                onPressed: getLocation,
+                onPressed: (){
+                  getLocation();
+                  controller.setZoom(zoomLevel: 18);
+                },
                 icon: const Icon(Icons.my_location, size: 30)
             ),
             IconButton(
-                onPressed: (){
-                  zoomOut();
-                  print("zoom out");
-                },
-                icon: const Icon(Icons.zoom_out, size: 30)
-            ),
-            IconButton(
-                onPressed: (){
-                  zoomIn();
-                  print("zoom in");
-                },
-                icon: const Icon(Icons.zoom_in, size: 30,)
-            ),
-            IconButton(
-                onPressed: (){
-                  drawRoad();
+                onPressed: () async {
+                  List ordre = await getMatriceDist();
+                  points = await getPointsTries(ordre);
+                  drawRoads(points);
                 },
                 icon: const Icon(Icons.add_road, size: 30)
             ),
+            IconButton(
+                onPressed: (){
+                  drawMyRoad(points);
+                },
+                icon: const Icon(Icons.play_arrow_sharp, size: 30,)),
+            IconButton(
+                onPressed: () {
+                  info();
+                },
+                icon: const Icon(Icons.info_outline_rounded, size: 30,)
+            )
           ],
         ),
       ),
@@ -93,6 +90,7 @@ class _Home_Map extends State<Home_Map> {
           Center(
             child: (
                 OSMFlutter(
+                  mapIsLoading: const Center(child: CircularProgressIndicator()),
                   showContributorBadgeForOSM: true,
                   showZoomController: true,
                   controller: controller,
@@ -142,33 +140,36 @@ class _Home_Map extends State<Home_Map> {
                       endIcon: const MarkerIcon(icon: Icon(Icons.star)),
                       middleIcon: const MarkerIcon(icon: Icon(Icons.ac_unit, size: 73, color: Colors.red,),)
                   ),
-                  onLocationChanged: (GeoPoint geopoint){
-                    setState(() {
-                      step=geopoint.longitude;
-                    });
-                  },
-                  /*
-              staticPoints: [
-                StaticPositionGeoPoint("line 1", const MarkerIcon(icon: Icon(Icons.train,color: Colors.green,size: 48,),),
-                  [
-                    GeoPoint(latitude: 47.4333594, longitude: 8.4680184),
-                    GeoPoint(latitude: 47.4317782, longitude: 8.4716146),
-                  ],
-                ),
-                StaticPositionGeoPoint("line 2",const MarkerIcon(icon: Icon(Icons.train,color: Colors.red,size: 48,),),
-                  [
-                    GeoPoint(latitude: 47.4433594, longitude: 8.4680184),
-                    GeoPoint(latitude: 47.4517782, longitude: 8.4716146),
-                  ],
-                )
-              ],*/
                 )
             ),
           ),
           BottomAppBar(
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Text("$distance"),
+                  Text("Point $currentPoint/${widget.points.length}"),
+                  OutlinedButton(
+                      onPressed: (){
+                        setState(() {
+                          if (currentPoint>1){
+                            currentPoint--;
+                            drawMyRoad(points);
+                          }
+                        });
+                      },
+                      child: const Text("Previous Point")
+                  ),
+                  OutlinedButton(
+                      onPressed: (){
+                        setState(() {
+                          if (currentPoint<widget.points.length){
+                            currentPoint++;
+                            drawMyRoad(points);
+                          }
+                        });
+                      },
+                      child: const Text("Next Point")
+                  ),
                 ],
               )
           ),
@@ -182,61 +183,271 @@ class _Home_Map extends State<Home_Map> {
     await controller.currentLocation();
   }
 
-  zoomIn() async {
-    await controller.setZoom(stepZoom: 1);
-  }
+  drawRoads(List tablGeo) async {
 
-  zoomOut() async {
-    await controller.setZoom(stepZoom: -1);
-  }
+    timeTotal=0;
+    distTotal=0;
 
-  drawRoad() async {
-    /*
-    List<GeoPoint> tablGeo=[GeoPoint(latitude: 48.08534240722656, longitude: -0.755290150642395),GeoPoint(latitude: 48.8588897, longitude: 2.320041,),GeoPoint(latitude: 41.3608556, longitude: 2.1110075,)];
-
-    print(tablGeo.length);
-    for (int i =0; i<tablGeo.length; i++){
-      if (i==0){
-        GeoPoint geoPoint = await controller.myLocation();
-        await controller.drawRoad(tablGeo[i], geoPoint);
-      } else{
-        await controller.drawRoad(tablGeo[i], tablGeo[i++]);
-      }
-    }*/
-
-    List<GeoPoint> tablGeo=[GeoPoint(latitude: 41.361912, longitude: 2.11422),GeoPoint(latitude: 41.379131, longitude: 2.12014,),GeoPoint(latitude: 41.40319, longitude: 2.17484,)];
 
     for (int i =0; i<tablGeo.length; i++){
       if (i==0){
         GeoPoint geoPoint = await controller.myLocation();
-        draw(geoPoint, tablGeo[i], i);
+        draw(geoPoint, tablGeo[i]);
       } else{
-        draw(tablGeo[i], tablGeo[i-1], i);
+        draw(tablGeo[i], tablGeo[i-1]);
       }
     }
 
-    /*
-    GeoPoint geoPoint = await controller.myLocation();
-    await controller.drawRoad(GeoPoint(latitude: 48.08534240722656, longitude: -0.755290150642395), geoPoint);
-    await controller.drawRoad(GeoPoint(latitude: 48.8588897, longitude: 2.320041,), GeoPoint(latitude: 48.08534240722656, longitude: -0.755290150642395));
-    await controller.drawRoad(GeoPoint(latitude: 41.3608556, longitude: 2.1110075,), GeoPoint(latitude: 48.8588897, longitude: 2.320041,));
-    */
+
+    await Future.delayed(const Duration(seconds: 1));
+    snack(infosBarre);
   }
 
-  draw (GeoPoint start, GeoPoint end, iteration) async {
+  drawMyRoad(List points) async {
+    GeoPoint myLocation = await controller.myLocation();
+
+    RoadInfo roadInfo = await controller.drawRoad(myLocation, points[currentPoint-1], roadType: RoadType.bike,roadOption: const RoadOption(roadColor: Colors.red,roadWidth: 20, ),);
+
+    setState(() {
+      infosBarre="Il reste: ${roadInfo.distance.toString()}km in ${((roadInfo.duration)!/60).floor()}min";
+    });
+  }
+
+  draw (GeoPoint start, GeoPoint end) async {
     RoadInfo roadInfo = await controller.drawRoad(
       start,
       end,
       roadType: RoadType.bike,
-      roadOption: RoadOption(
-        roadColor: Colors.red[(iteration+1)*300],
+      roadOption: const RoadOption(
+        roadColor: Colors.red,
+        roadWidth: 20,
       ),
     );
 
+    distTotal+=roadInfo.distance!;
+    timeTotal+=roadInfo.duration!/60;
+
+    infosBarre="$distTotal km in $timeTotal min";
+
+
+
+    /*
     setState((){
-      distance="${roadInfo.distance.toString()}km in ${roadInfo.duration}s";
+      infosBarre="Total distance: ${roadInfo.distance.toString()}km in ${((roadInfo.duration)!/60).floor()}min";
+      infosBarre="$distTotal km in $timeTotal min";
     });
+
+     */
   }
+
+  void placemarkers(){
+    List<GeoPoint> listMarkers=[];
+    for (int i=0; i<widget.points.length;i++){
+      listMarkers.add(widget.points[i]);
+    }
+
+    markers.add(StaticPositionGeoPoint("places", const MarkerIcon(icon: Icon(Icons.location_on, size: 50,),), listMarkers,),);
+  }
+
+
+
+  void snack(String str){
+    SnackBar snackBar = SnackBar(
+      content: Text(str, textScaleFactor: 1.5,),
+      duration: const Duration(seconds: 5),
+    );
+
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  Future<Null> info() async {
+    return(showDialog(
+        context: context,
+        barrierDismissible: true,
+        builder:(BuildContext context){
+          return SimpleDialog(
+            title: const Text("Informations", style: TextStyle(fontSize: 20, color: Colors.black), textAlign: TextAlign.center,),
+
+            children: [
+              Container(
+                height: MediaQuery.of(context).size.height/4,
+                margin: const EdgeInsets.all(20),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Text(infosBarre),
+                  ],
+                ),
+              ),
+            ],
+          );
+        }
+    ));
+  }
+
+  getPointsTries(List ordre) {
+    List point=[];
+
+    ordre.forEach((elt) {
+      if (elt!=0){
+        point.add(widget.points[elt-1]);
+      }
+    });
+
+    return point;
+
+  }
+
+  getMatriceDist () async {
+    List<GeoPoint> listPoints = [ await controller.myLocation()];
+
+    widget.points.forEach((elt) {
+      listPoints.add(elt);
+    });
+
+    var Matrice=[];
+
+    for (int i =0; i<listPoints.length;i++){
+      Matrice.add([]);
+      for (int j=0; j<listPoints.length;j++){
+        Matrice[i].add([0]);
+        if(i!=j){
+
+          RoadInfo roadInfo = await controller.drawRoad(listPoints[i],listPoints[j],roadType: RoadType.bike,roadOption: const RoadOption(roadWidth: 0,),);
+          Matrice[i][j]=roadInfo.distance;
+        }
+      }
+    }
+
+    List ordre = await Algorithm(Matrice);
+    return (ordre);
+
+  }
+
+
+  Algorithm(List <dynamic> listPoints) async {
+
+    List<int> ordre;
+    ordre = n_permutation(15, listPoints);
+    int index_ville_zero = ordre.indexOf(0);
+    List<int> ordre_depart_ville_zero = [0]
+      ..addAll(ordre.sublist(index_ville_zero + 1))
+      ..addAll(ordre.sublist(0, index_ville_zero));
+    return(ordre_depart_ville_zero);
+
+  }
+
+
+
+  List<int> shuffle(List<int> array) {
+    var random = Random(); //import 'dart:math';
+
+    // Go through all elementsof list
+    for (var i = array.length - 1; i > 0; i--) {
+
+      // Pick a random number according to the lenght of list
+      var n = random.nextInt(i + 1);
+      var temp = array[i];
+      array[i] = array[n];
+      array[n] = temp;
+    }
+    return array;
+  }
+
+
+  longueur(List ordre, List <dynamic> listPoints){
+    double d = 0;
+    for(int i = 0; i < ordre.length; i++){
+      if(i == 0){
+        d += double.parse(listPoints[ordre[ordre.length - 1]][ordre[0]].toString());
+      }
+      else{
+        d += double.parse(listPoints[ordre[i-1]][ordre[i]].toString());
+      }
+      return d;
+    }
+  }
+
+
+  List<int> permutation_rnd(List<int> ordre, int minuteur, List <dynamic> listPoints){
+
+    int k = 0;
+    int l = 0;
+    List<int> r = [];
+    double t;
+    double d = 0;
+    double d0;
+    int it = 1;
+    List<int> ordre2 = ordre;
+    d = longueur(ordre, listPoints);
+    d0 = d+1;
+
+    while(d < d0 || it < minuteur){
+      it += 1;
+      d0 = d;
+      for(int i = 1; i < (ordre.length)-1; i++){
+        for(int j = i+2; j < (ordre.length)+1; j++){
+          k = 1 + ( Random().nextInt(ordre.length - 1));
+          l = (k+1) + ( Random().nextInt(ordre.length - (k)));
+          for(int i = 0; i < (l-k); i++){
+            r.add(0);
+          }
+          List.copyRange(r, 0, ordre, k, l);
+          r = List.from(r.reversed);
+          List.copyRange(ordre2, 0, ordre, 0, k);
+          List.copyRange(ordre2, k, r, 0, r.length);
+          List.copyRange(ordre2, l, ordre, l, ordre.length);
+          r.clear();
+          t = longueur(ordre2, listPoints);
+          if(t < d){
+            d = t;
+            ordre = ordre2;
+          }
+        }
+      }
+    }
+    return ordre;
+  }
+
+  List<int> n_permutation(int minuteur, List <dynamic> listPoints){
+    List<int> ordre = List<int>.generate(listPoints.length , (int index) => index);
+    List<int> bordre = [];
+    double d0 = 0;
+    double d;
+    ordre.forEach((elt){
+      bordre.add(elt);
+    });
+
+    d0 = longueur(ordre, listPoints);
+    for(int i = 0; i < 50; i++){
+      ordre = shuffle(ordre);
+      ordre = permutation_rnd (ordre, minuteur, listPoints);
+      d = longueur(ordre, listPoints);
+      if(d < d0){
+        d0 = d;
+        bordre.clear();
+        ordre.forEach((elt){
+          bordre.add(elt);
+        });
+      }
+    }
+    return bordre;
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 }
