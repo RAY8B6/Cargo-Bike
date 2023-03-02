@@ -8,11 +8,16 @@ import '../dashboard.dart';
 
 import 'package:flutter/services.dart';
 
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+
+
 
 class Home_Map extends StatefulWidget {
-  const Home_Map({super.key, required this.title, required this.points});
+  const Home_Map({super.key, required this.title, required this.points, required this.idLiv});
   final String title;
   final List<GeoPoint> points;
+  final int idLiv;
 
   @override
   State<Home_Map> createState() => _Home_Map();
@@ -333,7 +338,11 @@ class _Home_Map extends State<Home_Map> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     ElevatedButton(
-                        onPressed: (){
+                        onPressed: () async {
+                          print(widget.idLiv);
+                          print("oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo");
+                          final supabase = Supabase.instance.client;
+                          await supabase.from('deliveries').update({'status' : 'completed'}).match({'id' : widget.idLiv});
                           Navigator.pushAndRemoveUntil(
                             context,
                             MaterialPageRoute(builder: (context) => DashboardScreen()),
