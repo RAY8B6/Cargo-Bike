@@ -85,7 +85,7 @@ class _DeliveryPageState extends State<DeliveryPage> {
                         const SizedBox(height: 80.0),
                         MaterialButton(
                           onPressed: () {
-                            Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> Home_Map(title: "Map", points: points,)));
+                            Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> Home_Map(title: "Map", points: points, idLiv: _selectedIndex)));
                           },
                           color: const Color(0xff3a57e8),
                           elevation: 0,
