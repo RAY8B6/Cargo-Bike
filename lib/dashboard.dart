@@ -8,6 +8,8 @@ import 'startDeliveryScreen.dart';
 
 import 'package:permission_handler/permission_handler.dart';
 
+bool permissions = false;
+
 class DashboardScreen extends StatefulWidget{
   const DashboardScreen({Key? key}) : super(key: key);
 
@@ -20,8 +22,15 @@ class _DashboardScreenState extends State<DashboardScreen>{
   final supabase = Supabase.instance.client;
   User? user;
 
+  Future getUserData({required BuildContext context}) async {
+    final supabase = Supabase.instance.client;
+    var userInfos = await supabase.from('profiles').select('id, first_name, last_name, profile_picture, has_permissions').eq('id', supabase.auth.currentUser?.id.toString());
+    permissions = userInfos[0]['has_permissions'];
+  }
+  
   //Dashboard items
   Card makeDashboardItem(String title, String img, int index){
+
     return Card(
       elevation: 2,
       margin: const EdgeInsets.all(8),
@@ -100,6 +109,7 @@ class _DashboardScreenState extends State<DashboardScreen>{
 
   @override
   Widget build(BuildContext context){
+    getUserData(context: context);
     return Scaffold(
       appBar: AppBar(
         leading: InkWell(
@@ -132,7 +142,6 @@ class _DashboardScreenState extends State<DashboardScreen>{
       backgroundColor: const Color.fromARGB(255, 170, 193, 232),
       body: Column(
         children: [
-
           const SizedBox(height: 20),
           Expanded(
             child: GridView.count(
