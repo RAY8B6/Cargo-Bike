@@ -44,7 +44,6 @@ dependencies:
   flutter_osm_plugin: ^0.41.0
   permission_handler: ^10.2.0
 
-
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -25,19 +25,19 @@ class SettingsPage extends StatelessWidget{
     getUserData(context: context);
 
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 170, 193, 232),
-      appBar: AppBar(
-        leading: InkWell(
-          child: const Icon(Icons.arrow_back, color: Colors.white,),
-          onTap: (){
-            Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> const DashboardScreen()));
-          },
-        ),
-        brightness: Brightness.light,
-        iconTheme: const IconThemeData(color: Colors.white),
-        backgroundColor: Colors.blue,
-        title: const Text("Settings", style: TextStyle(color: Colors.white),),
-      ),
+     backgroundColor: const Color.fromARGB(255, 170, 193, 232),
+     appBar: AppBar(
+       leading: InkWell(
+         child: const Icon(Icons.arrow_back, color: Colors.white,),
+         onTap: (){
+           Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> const DashboardScreen()));
+         },
+       ),
+       brightness: Brightness.light,
+       iconTheme: const IconThemeData(color: Colors.white),
+       backgroundColor: Colors.blue,
+       title: const Text("Settings", style: TextStyle(color: Colors.white),),
+     ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

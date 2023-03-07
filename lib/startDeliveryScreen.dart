@@ -1,12 +1,15 @@
+import 'package:application_cargo/add_delivery.dart';
 import 'package:application_cargo/main.dart';
 import 'package:application_cargo/dashboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'edit_delivery.dart';
 
 import 'map/home_map.dart';
 
 int _selectedIndex = 0;
+bool permissions = false;
 
 class DeliveryPage extends StatefulWidget {
   const DeliveryPage({super.key});
@@ -23,8 +26,20 @@ class _DeliveryPageState extends State<DeliveryPage> {
       .from('deliveries')
       .select<List<Map<String, dynamic>>>();
 
+  final supabase = Supabase.instance.client;
+  User? user;
+
+  Future getUserData({required BuildContext context}) async {
+    final supabase = Supabase.instance.client;
+    var userInfos = await supabase.from('profiles').select('id, first_name, last_name, profile_picture, has_permissions').eq('id', supabase.auth.currentUser?.id.toString());
+    permissions = userInfos[0]['has_permissions'];
+  }
+
   @override
   Widget build(BuildContext context) {
+
+    getUserData(context: context);
+
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 170, 193, 232),
       appBar: AppBar(
@@ -82,7 +97,7 @@ class _DeliveryPageState extends State<DeliveryPage> {
                             );
                           }),
                         ),
-                        const SizedBox(height: 80.0),
+                        const SizedBox(height: 20.0),
                         MaterialButton(
                           onPressed: () {
                             Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> Home_Map(title: "Map", points: points, idLiv: _selectedIndex)));
@@ -105,6 +120,55 @@ class _DeliveryPageState extends State<DeliveryPage> {
                             ),
                           ),
                         ),
+                        const SizedBox(height: 10.0),
+                        if(permissions == true)
+                          MaterialButton(
+                            onPressed: () {
+                              Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> EditDeliveryPage(index: _selectedIndex)));
+                            },
+                            color: const Color(0xff3a57e8),
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            padding: const EdgeInsets.all(16),
+                            textColor: const Color(0xffffffff),
+                            height: 45,
+                            minWidth: MediaQuery.of(context).size.width,
+                            child: const Text(
+                              "Edit selected delivery",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                                fontStyle: FontStyle.normal,
+                              ),
+                            ),
+                          ),
+                        const SizedBox(height: 10.0),
+                        if(permissions == true)
+                          MaterialButton(
+                            onPressed: () {
+                              Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> AddDeliveryPage()));
+                            },
+                            color: const Color(0xff3a57e8),
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            padding: const EdgeInsets.all(16),
+                            textColor: const Color(0xffffffff),
+                            height: 45,
+                            minWidth: MediaQuery.of(context).size.width,
+                            child: const Text(
+                              "Add a new delivery",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                                fontStyle: FontStyle.normal,
+                              ),
+                            ),
+                          ),
+
                       ],
                   )
                 );

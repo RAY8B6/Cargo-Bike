@@ -20,8 +20,6 @@ class SettingsUI extends StatelessWidget {
 
 class EditProfilePage extends StatefulWidget {
 
-
-
   @override
   _EditProfilePageState createState() => _EditProfilePageState();
 }
@@ -36,6 +34,28 @@ class _EditProfilePageState extends State<EditProfilePage> {
     profilePicture = userInfos[0]['profile_picture'];
     email = supabase.auth.currentUser?.email.toString();
   }
+
+  Future updateUserData({required BuildContext context}) async {
+    getUserData(context: context);
+    final supabase = Supabase.instance.client;
+    if (fnameController.text != firstName && fnameController.text.isNotEmpty){
+      await supabase.from('profiles').update({'first_name' : fnameController.text}).match({'id' : supabase.auth.currentUser?.id.toString()});
+    }
+    if (lnameController.text != lastName && lnameController.text.isNotEmpty){
+      await supabase.from('profiles').update({'last_name' : lnameController.text}).match({'id' : supabase.auth.currentUser?.id.toString()});
+    }
+    if (emailController.text != email && emailController.text.isNotEmpty){
+      supabase.auth.updateUser(
+        UserAttributes(
+          email: emailController.text,
+        ),
+      );
+    }
+  }
+
+  final fnameController = TextEditingController();
+  final lnameController = TextEditingController();
+  final emailController = TextEditingController();
 
   bool showPassword = false;
   @override
@@ -109,7 +129,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                             Icons.edit,
                             color: Colors.white,
                           ),
-                        )),
+                        )
+                    ),
                   ],
                 ),
               ),
@@ -117,22 +138,34 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 height: 35,
               ),
               TextField(
+                controller: fnameController,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
                 decoration: InputDecoration(
                   contentPadding: EdgeInsets.only(bottom: 3),
                   labelText: 'First name',
                   floatingLabelBehavior: FloatingLabelBehavior.always,
                   hintText: firstName,
-                  hintStyle: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
+                    hintStyle: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
                 ),
               ),
               const SizedBox(
                 height: 15,
               ),
               TextField(
+                controller: lnameController,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
                 decoration: InputDecoration(
                   contentPadding: EdgeInsets.only(bottom: 3),
                   labelText: 'Last name',
@@ -149,6 +182,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 height: 15,
               ),
               TextField(
+                controller: emailController,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
                 decoration: InputDecoration(
                   contentPadding: EdgeInsets.only(bottom: 3),
                   labelText: 'Email',
@@ -174,17 +213,17 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     onPressed: () {
                       Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> SettingsPage()));
                     },
-                    child: const Text("CANCEL",
-                        style: TextStyle(
+                    child: const Text("CANCEL", style: TextStyle(
                             fontSize: 14,
                             letterSpacing: 2.2,
-                            color: Colors.white)),
+                            color: Colors.white)
+                    ),
                   ),
                   ElevatedButton(
-                    onPressed: () {},
-                    child: const Text(
-                      "SAVE",
-                      style: TextStyle(
+                    onPressed: () {
+                      updateUserData(context: context);
+                    },
+                    child: const Text("SAVE", style: TextStyle(
                           fontSize: 14,
                           letterSpacing: 2.2,
                           color: Colors.white),
