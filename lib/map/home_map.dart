@@ -13,6 +13,9 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 
 
+
+
+
 class Home_Map extends StatefulWidget {
   const Home_Map({super.key, required this.title, required this.points, required this.idLiv});
   final String title;
@@ -62,7 +65,7 @@ class _Home_Map extends State<Home_Map> {
               icon: const Icon(Icons.arrow_back, color: Colors.white,),
             ),
             IconButton(
-                onPressed: (){
+                onPressed: () async {
                   getLocation();
                   controller.setZoom(zoomLevel: 18);
                 },
@@ -210,10 +213,21 @@ class _Home_Map extends State<Home_Map> {
     snack(infosBarre);
   }
 
+  Color drawColor(double? distance, double? duree){
+    if(distance!/duree!>0.0035){
+      return(Colors.green);
+    }
+    if(distance/duree>0.003){
+      return(Colors.orange);
+    }
+    return(Colors.red);
+  }
+
   drawMyRoad(List points) async {
     GeoPoint myLocation = await controller.myLocation();
 
-    RoadInfo roadInfo = await controller.drawRoad(myLocation, points[currentPoint-1], roadType: RoadType.bike,roadOption: const RoadOption(roadColor: Colors.red,roadWidth: 20, ),);
+    RoadInfo rInf = await controller.drawRoad(myLocation, points[currentPoint-1], roadType: RoadType.bike,roadOption: const RoadOption(roadColor: Colors.red,roadWidth: 0, ),);
+    RoadInfo roadInfo = await controller.drawRoad(myLocation, points[currentPoint-1], roadType: RoadType.bike,roadOption: RoadOption(roadColor: drawColor(rInf.distance, rInf.duration),roadWidth: 20, ),);
 
     setState(() {
       infosBarre="Il reste: ${roadInfo.distance.toString()}km in ${((roadInfo.duration)!/60).floor()}min";
@@ -221,15 +235,8 @@ class _Home_Map extends State<Home_Map> {
   }
 
   draw (GeoPoint start, GeoPoint end) async {
-    RoadInfo roadInfo = await controller.drawRoad(
-      start,
-      end,
-      roadType: RoadType.bike,
-      roadOption: const RoadOption(
-        roadColor: Colors.red,
-        roadWidth: 20,
-      ),
-    );
+    RoadInfo rInf = await controller.drawRoad(start,end,roadType: RoadType.bike,roadOption: const RoadOption(roadColor: Colors.red,roadWidth: 0,),);
+    RoadInfo roadInfo = await controller.drawRoad(start,end,roadType: RoadType.bike,roadOption: RoadOption(roadColor: drawColor(rInf.distance, rInf.duration),roadWidth: 20,),);
 
     distTotal+=roadInfo.distance!;
     timeTotal+=roadInfo.duration!/60;
@@ -367,11 +374,6 @@ class _Home_Map extends State<Home_Map> {
         }
     ));
   }
-
-
-
-
-
 
 
   Algorithm(List <dynamic> listPoints) async {
