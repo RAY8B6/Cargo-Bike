@@ -1,8 +1,7 @@
 // ignore_for_file: unrelated_type_equality_checks
 
-import 'package:application_cargo/customize_profile.dart';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
 import 'startDeliveryScreen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -69,7 +68,7 @@ class _AddDeliveryPageState extends State<AddDeliveryPage> {
         await supabase.from('customers').insert({'first_name': firstNameController.text, "last_name": lastNameController.text});
       }
       if (deliveryIdState == "Doesn't exist"){
-        await supabase.from('deliveries').insert({'id': deliveryIdController.text, "nb_customers": 1, "nb_packages": 1, "distance": 10, "points": [[41.3, 2.1]] });
+        await supabase.from('deliveries').insert({'id': deliveryIdController.text, "nb_customers": 1, "nb_packages": 1, "points": [[41.3, 2.1]] });
       }
       else{
         await supabase.from('deliveries').update({'nb_customers' : 2}).match({'id' : deliveryIdController.text});
