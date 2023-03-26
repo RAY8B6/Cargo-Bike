@@ -153,7 +153,9 @@ class _AddDeliveryPageState extends State<AddDeliveryPage> {
         await supabase.from('customers').insert({'first_name': firstNameController.text, "last_name": lastNameController.text});
       }
       if (deliveryIdState == "Doesn't exist"){
+
         await supabase.from('deliveries').insert({'id': deliveryIdController.text, "nb_customers": 1, "nb_packages": 1, "points": [coordinates] });
+
       }
       else{
         await supabase.from('deliveries').update({'nb_customers' : 2}).match({'id' : deliveryIdController.text});

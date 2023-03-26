@@ -1,5 +1,4 @@
 import 'package:application_cargo/add_delivery.dart';
-import 'package:application_cargo/main.dart';
 import 'package:application_cargo/dashboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
@@ -81,12 +80,7 @@ class _DeliveryPageState extends State<DeliveryPage> {
                                 title: Text("Delivery number ${delivery['id']}"),
                                 subtitle: Text("Customers to deliver : ${delivery['nb_customers']}"
                                     "\nPackages to deliver : ${delivery['nb_packages']}"
-                                    "\nEstimated time : ${delivery['time']}"
-                                    "\nTotal distance to travel : ${delivery['distance']}km"
-                                    //"\nAlgo: ${getAlgo(delivery["points"])}"
-                                    "\nDifficulty: 3/5"),
-                                    //"\nPoints : ${delivery['points']}"
-                                    //"\nFirst Point : ${getPoint(1,delivery["points"])}"),
+                                    "\nStatus : ${delivery['status']}"),
                                 onTap: () {
                                   setState(() {
                                     _selectedIndex = index;
