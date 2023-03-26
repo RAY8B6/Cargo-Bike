@@ -1,10 +1,19 @@
 // ignore_for_file: unrelated_type_equality_checks
 
+import 'dart:ffi';
+import 'dart:typed_data';
+
 import 'package:application_cargo/customize_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
 import 'startDeliveryScreen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
+
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+
 
 TextEditingController deliveryIdController = TextEditingController();
 TextEditingController firstNameController = TextEditingController();
@@ -35,9 +44,66 @@ class AddDeliveryPage extends StatefulWidget {
 
 class _AddDeliveryPageState extends State<AddDeliveryPage> {
 
+  Future<List<double>> getCoordinates(String address) async {
+    final apiUrl = 'https://nominatim.openstreetmap.org/search?q=$address&format=json&limit=1';
+
+    final response = await http.get(Uri.parse(apiUrl));
+    final data = json.decode(response.body);
+
+    if (data.isNotEmpty) {
+      final lat = double.parse(data[0]['lat']);
+      final lng = double.parse(data[0]['lon']);
+      return [lat, lng];
+    } else {
+      showDialog<String>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text("Error"),
+          content: const Text("Failed to find the address"),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text("Ok"))
+          ],
+        ),
+      );
+      throw Exception('Failed to retrieve coordinates from OpenStreetMap Nominatim API.');
+    }
+  }
+
   // ignore: duplicate_ignore
   Future addPackageToDelivery({required BuildContext context}) async {
     final supabase = Supabase.instance.client;
+    String error = "";
+
+    if (deliveryIdController.text.isEmpty || deliveryAddressController.text.isEmpty || firstNameController.text.isEmpty || lastNameController.text.isEmpty){
+      if (deliveryIdController.text.isEmpty){
+        error = "No delivery Id entered";
+      }
+      if (deliveryAddressController.text.isEmpty){
+        error = "No delivery address entered";
+      }
+      if (firstNameController.text.isEmpty || lastNameController.text.isEmpty){
+        error = "Wrong customers informations";
+      }
+      showDialog<String>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text("Error"),
+          content: Text(error),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text("Ok"))
+          ],
+        ),
+      );
+      throw Exception("Error");
+    }
 
     var delivery = await supabase.from('deliveries').select('id').eq('id', deliveryIdController.text);
     if (delivery.toString() != "[]"){
@@ -58,10 +124,28 @@ class _AddDeliveryPageState extends State<AddDeliveryPage> {
     var package = await supabase.from('packages').select('id').eq('id', packageIdController.text);
     if (package.toString() != "[]"){
       packageIdState = "Exist";
+      showDialog<String>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text("Package Id already taken"),
+          content: Text(error),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text("Ok"))
+          ],
+        ),
+      );
+      throw Exception("Error");
     }
     else{
       packageIdState = "Doesn't exist";
     }
+
+    final coord = await getCoordinates(deliveryAddressController.text);
+    final List<double> coordinates = coord;
 
     // ignore: unrelated_type_equality_checks
     if (packageIdState == "Doesn't exist" && deliveryIdController.text.isNotEmpty && deliveryAddressController.text.isNotEmpty){
@@ -69,7 +153,7 @@ class _AddDeliveryPageState extends State<AddDeliveryPage> {
         await supabase.from('customers').insert({'first_name': firstNameController.text, "last_name": lastNameController.text});
       }
       if (deliveryIdState == "Doesn't exist"){
-        await supabase.from('deliveries').insert({'id': deliveryIdController.text, "nb_customers": 1, "nb_packages": 1, "distance": 10, "points": [[41.3, 2.1]] });
+        await supabase.from('deliveries').insert({'id': deliveryIdController.text, "nb_customers": 1, "nb_packages": 1, "points": [coordinates] });
       }
       else{
         await supabase.from('deliveries').update({'nb_customers' : 2}).match({'id' : deliveryIdController.text});
@@ -77,6 +161,18 @@ class _AddDeliveryPageState extends State<AddDeliveryPage> {
 
       await supabase.from('packages').insert({'id': packageIdController.text, "delivery_id": deliveryIdController.text, "customer_id": 3, "delivery_address": deliveryAddressController.text});
 
+      showDialog<String>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text("Succes"),
+          content: const Text("The delivery was successfully created or updated"),
+          actions: [
+            TextButton(
+                onPressed: () => Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> const DeliveryPage())),
+                child: const Text("Ok"))
+          ],
+        ),
+      );
     }
   }
 
