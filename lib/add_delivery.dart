@@ -198,7 +198,7 @@ class _AddDeliveryPageState extends State<AddDeliveryPage> {
         brightness: Brightness.light,
         iconTheme: const IconThemeData(color: Colors.white),
         backgroundColor: Colors.blue,
-        title: const Text("Add a new delivery", style: TextStyle(color: Colors.white),),
+        title: const Text("Add a new package", style: TextStyle(color: Colors.white),),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),

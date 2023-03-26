@@ -61,36 +61,45 @@ class _DeliveryPageState extends State<DeliveryPage> {
                 return const Center(child: CircularProgressIndicator());
               }
               final deliveries = snapshot.data!;
+              deliveries.sort((a, b) => a['id'].compareTo(b['id']));
               return
                 SingleChildScrollView(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         const SizedBox(height: 20.0),
-
                         const SizedBox(height: 20.0),
-                        ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: deliveries.length,
-                          itemBuilder: ((context, index) {
-                            final delivery = deliveries[index];
-                            return Ink(
-                              child: ListTile(
-                                selected: index == _selectedIndex,
-                                title: Text("Delivery number ${delivery['id']}"),
-                                subtitle: Text("Customers to deliver : ${delivery['nb_customers']}"
-                                    "\nPackages to deliver : ${delivery['nb_packages']}"
-                                    "\nStatus : ${delivery['status']}"),
-                                onTap: () {
-                                  setState(() {
-                                    _selectedIndex = index;
-                                    points = BuildPoints(delivery["points"]);
-                                  });
-                                },
-                            ),
-                            );
-                          }),
+
+                        Container(
+                          height : MediaQuery.of(context).size.height * 0.5,
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            physics: ClampingScrollPhysics(),
+                            itemCount: deliveries.length,
+                            itemBuilder: ((context, index) {
+                              final delivery = deliveries[index];
+                              if (delivery['status'] == "available"){
+                                return Ink(
+                                  child: ListTile(
+                                    selected: index == _selectedIndex,
+                                    title: Text("Delivery number ${delivery['id']}"),
+                                    subtitle: Text("Customers to deliver : ${delivery['nb_customers']}"
+                                        "\nPackages to deliver : ${delivery['nb_packages']}"
+                                        "\nStatus : ${delivery['status']}"),
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedIndex = index;
+                                        points = BuildPoints(delivery["points"]);
+                                      });
+                                    },
+                                  ),
+                                );
+                              }
+                              return const SizedBox.shrink();
+                            }),
+                          ),
                         ),
+
                         const SizedBox(height: 20.0),
                         MaterialButton(
                           onPressed: () {
