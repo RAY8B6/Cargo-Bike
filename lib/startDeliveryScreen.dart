@@ -154,7 +154,7 @@ class _DeliveryPageState extends State<DeliveryPage> {
                             height: 45,
                             minWidth: MediaQuery.of(context).size.width,
                             child: const Text(
-                              "Add a new delivery",
+                              "Add a new package",
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w700,

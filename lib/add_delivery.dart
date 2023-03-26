@@ -13,8 +13,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-
-
 TextEditingController deliveryIdController = TextEditingController();
 TextEditingController firstNameController = TextEditingController();
 TextEditingController lastNameController = TextEditingController();
@@ -123,11 +121,12 @@ class _AddDeliveryPageState extends State<AddDeliveryPage> {
 
     var package = await supabase.from('packages').select('id').eq('id', packageIdController.text);
     if (package.toString() != "[]"){
+      error = "Package Id already taken";
       packageIdState = "Exist";
       showDialog<String>(
         context: context,
         builder: (BuildContext context) => AlertDialog(
-          title: const Text("Package Id already taken"),
+          title: const Text("Error"),
           content: Text(error),
           actions: [
             TextButton(
@@ -154,11 +153,18 @@ class _AddDeliveryPageState extends State<AddDeliveryPage> {
       }
       if (deliveryIdState == "Doesn't exist"){
 
-        await supabase.from('deliveries').insert({'id': deliveryIdController.text, "nb_customers": 1, "nb_packages": 1, "points": [coordinates] });
+        await supabase.from('deliveries').insert({'id': deliveryIdController.text, "nb_customers": 1, "nb_packages": 1, "points": [coordinates], "status": "available" });
 
       }
       else{
-        await supabase.from('deliveries').update({'nb_customers' : 2}).match({'id' : deliveryIdController.text});
+        List<dynamic> addresses = await supabase.from('deliveries').select('points').eq('id', deliveryIdController.text);
+        var customers = await supabase.from('deliveries').select('nb_customers').eq('id', deliveryIdController.text);
+        var packages = await supabase.from('deliveries').select('nb_packages').eq('id', deliveryIdController.text);
+        int value_packages = packages[0]['nb_packages'];
+        int value_customers = customers[0]['nb_customers'];
+        List<dynamic> value_points = addresses[0]['points'];
+        value_points.add(coordinates);
+        await supabase.from('deliveries').update({'nb_customers' : value_customers += 1, 'nb_packages' : value_packages += 1, 'points' : value_points}).match({'id' : deliveryIdController.text});
       }
 
       await supabase.from('packages').insert({'id': packageIdController.text, "delivery_id": deliveryIdController.text, "customer_id": 3, "delivery_address": deliveryAddressController.text});
@@ -166,7 +172,7 @@ class _AddDeliveryPageState extends State<AddDeliveryPage> {
       showDialog<String>(
         context: context,
         builder: (BuildContext context) => AlertDialog(
-          title: const Text("Succes"),
+          title: const Text("Success"),
           content: const Text("The delivery was successfully created or updated"),
           actions: [
             TextButton(
@@ -488,29 +494,18 @@ class _AddDeliveryPageState extends State<AddDeliveryPage> {
                   ),
                 ),
               ),
-
-              Padding(
-                padding: const EdgeInsets.fromLTRB(0, 16, 0, 0),
-                child: MaterialButton(
-                  onPressed: () {
-
-                  },
-                  color: const Color(0xff3a57e8),
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                  padding: const EdgeInsets.all(16),
-                  textColor: const Color(0xffffffff),
-                  height: 45,
-                  minWidth: MediaQuery.of(context).size.width,
-                  child: const Text(
-                    "Add the delivery",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                      fontStyle: FontStyle.normal,
-                    ),
+              const Padding(
+                padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
+                child: Text(
+                  "Note : If the delivery Id does not exist, it will create a new delivery with all the information entered above."
+                      "\nYou can delete a selected delivery using the Edit selected delivery page.",
+                  textAlign: TextAlign.center,
+                  overflow: TextOverflow.clip,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w400,
+                    fontStyle: FontStyle.normal,
+                    fontSize: 14,
+                    color: Color(0xff000000),
                   ),
                 ),
               ),
