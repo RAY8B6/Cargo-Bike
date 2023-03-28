@@ -20,6 +20,7 @@ class DeliveryPage extends StatefulWidget {
 class _DeliveryPageState extends State<DeliveryPage> {
 
   List<GeoPoint> points = [];
+  int deliveryId = 1;
 
   final _future = Supabase.instance.client
       .from('deliveries')
@@ -88,6 +89,8 @@ class _DeliveryPageState extends State<DeliveryPage> {
                                         "\nStatus : ${delivery['status']}"),
                                     onTap: () {
                                       setState(() {
+                                        deliveryId = delivery['id'];
+                                        print(deliveryId);
                                         _selectedIndex = index;
                                         points = BuildPoints(delivery["points"]);
                                       });
@@ -127,7 +130,7 @@ class _DeliveryPageState extends State<DeliveryPage> {
                         if(permissions == true)
                           MaterialButton(
                             onPressed: () {
-                              Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> EditDeliveryPage(index: _selectedIndex)));
+                              Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> EditDeliveryPage(index: deliveryId)));
                             },
                             color: const Color(0xff3a57e8),
                             elevation: 0,

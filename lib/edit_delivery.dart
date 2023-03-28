@@ -36,7 +36,7 @@ class _EditDeliveryPageState extends State<EditDeliveryPage> {
   Future<List<String>> getUserData({required BuildContext context}) async {
     List<String> result = [];
     final supabase = Supabase.instance.client;
-    var deliveryInfos = await supabase.from('deliveries').select('id, nb_customers, nb_packages, points, status').eq('id', (widget.index + 1).toString());
+    var deliveryInfos = await supabase.from('deliveries').select('id, nb_customers, nb_packages, points, status').eq('id', (widget.index).toString());
     if(deliveryInfos.toString() != "[]"){
       Id = deliveryInfos[0]['id'].toString();
       Nb_Customers = deliveryInfos[0]['nb_customers'].toString();
@@ -58,7 +58,7 @@ class _EditDeliveryPageState extends State<EditDeliveryPage> {
   String _hintNbCustomersText = "";
   String _hintStatusText = "";
   void changeHintText(List<String> list) {
-    if(this.mounted){
+    if(this.mounted && list.isNotEmpty){
       setState(() {
         _hintIdText = list[0];
         _hintNbCustomersText = list[1];
@@ -71,12 +71,13 @@ class _EditDeliveryPageState extends State<EditDeliveryPage> {
   @override
   Widget build(BuildContext context) {
 
-    Future<List<String>> result = getUserData(context: context);
+    Future.delayed(Duration(seconds: 1), (){
+      Future<List<String>> result = getUserData(context: context);
 
-    result.then((deliveryData) {
-      this.changeHintText(deliveryData);
+      result.then((deliveryData) {
+        this.changeHintText(deliveryData);
+      });
     });
-
 
     return Scaffold(
       appBar: AppBar(
