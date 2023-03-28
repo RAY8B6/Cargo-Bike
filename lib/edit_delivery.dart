@@ -71,13 +71,14 @@ class _EditDeliveryPageState extends State<EditDeliveryPage> {
   @override
   Widget build(BuildContext context) {
 
-    Future.delayed(Duration(seconds: 1), (){
+    if(_hintIdText == ""){
       Future<List<String>> result = getUserData(context: context);
 
       result.then((deliveryData) {
+        print(deliveryData);
         this.changeHintText(deliveryData);
       });
-    });
+    }
 
     return Scaffold(
       appBar: AppBar(
