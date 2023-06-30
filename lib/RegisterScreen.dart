@@ -1,15 +1,16 @@
+// ignore_for_file: avoid_print
+
 import 'package:application_cargo/main.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/material.dart';
 
 class RegisterScreen extends StatelessWidget {
-
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
 
   Future register({required BuildContext context}) async {
-    if(confirmPasswordController.text != passwordController.text){
+    if (confirmPasswordController.text != passwordController.text) {
       showDialog<String>(
         context: context,
         builder: (BuildContext context) => AlertDialog(
@@ -24,17 +25,34 @@ class RegisterScreen extends StatelessWidget {
       );
     } else {
       final supabase = Supabase.instance.client;
-      await supabase.auth.signUp(email: emailController.text, password: passwordController.text);
+      final authResponse = await supabase.auth.signUp(
+          email: emailController.text, password: passwordController.text);
+      debugPrint('Test uid ${authResponse.user!.id}');
+      // final client = await supabase.auth.admin.getUserById();
+      // final idClient = client.user!.id;
+      // ignore: prefer_interpolation_to_compose_strings
+      //  print("id :=" + idClient);
+
+      await supabase.from('profiles').insert([
+        {
+          'id': authResponse.user!.id,
+          'email': emailController.text,
+          'has_permissions': 'TRUE'
+        }
+      ]);
+
+      print(emailController.text);
+      // ignore: use_build_context_synchronously
       showDialog<String>(
         context: context,
         builder: (BuildContext context) => AlertDialog(
-          title: const Text("Succes"),
+          title: const Text("Success"),
           content: const Text("Account created !"),
           actions: [
             TextButton(
-                onPressed: () => Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> const HomePage())),
+                onPressed: () => Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (context) => const HomePage())),
                 child: const Text("Ok"))
-
           ],
         ),
       );
@@ -76,7 +94,7 @@ class RegisterScreen extends StatelessWidget {
                   ),
                 ),
               ),
-			  const Padding(
+              const Padding(
                 padding: EdgeInsets.fromLTRB(0, 8, 0, 0),
                 child: Text(
                   "Create an account and start using the app",
@@ -127,12 +145,12 @@ class RegisterScreen extends StatelessWidget {
                       color: Color(0xff000000),
                     ),
                     filled: true,
-					          fillColor: const Color(0xffffffff),
+                    fillColor: const Color(0xffffffff),
                     isDense: false,
                     contentPadding:
                         const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                    prefixIcon:
-                        const Icon(Icons.mail, color: Color(0xff212435), size: 24),
+                    prefixIcon: const Icon(Icons.mail,
+                        color: Color(0xff212435), size: 24),
                   ),
                 ),
               ),
@@ -153,17 +171,17 @@ class RegisterScreen extends StatelessWidget {
                     disabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide:
-                      const BorderSide(color: Color(0xff3a57e8), width: 1),
+                          const BorderSide(color: Color(0xff3a57e8), width: 1),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide:
-                      const BorderSide(color: Color(0xff3a57e8), width: 1),
+                          const BorderSide(color: Color(0xff3a57e8), width: 1),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide:
-                      const BorderSide(color: Color(0xff3a57e8), width: 1),
+                          const BorderSide(color: Color(0xff3a57e8), width: 1),
                     ),
                     hintText: "Password",
                     hintStyle: const TextStyle(
@@ -176,10 +194,10 @@ class RegisterScreen extends StatelessWidget {
                     fillColor: const Color(0xffffffff),
                     isDense: false,
                     contentPadding:
-                    const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                        const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                     prefixIcon: const Icon(Icons.lock,
                         color: Color(0xff212435), size: 24),
-					),
+                  ),
                 ),
               ),
               Padding(
@@ -199,17 +217,17 @@ class RegisterScreen extends StatelessWidget {
                     disabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide:
-                      const BorderSide(color: Color(0xff3a57e8), width: 1),
+                          const BorderSide(color: Color(0xff3a57e8), width: 1),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide:
-                      const BorderSide(color: Color(0xff3a57e8), width: 1),
+                          const BorderSide(color: Color(0xff3a57e8), width: 1),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide:
-                      const BorderSide(color: Color(0xff3a57e8), width: 1),
+                          const BorderSide(color: Color(0xff3a57e8), width: 1),
                     ),
                     hintText: "Confirm Password",
                     hintStyle: const TextStyle(
@@ -223,7 +241,7 @@ class RegisterScreen extends StatelessWidget {
                     isDense: false,
                     contentPadding:
                         const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-					              prefixIcon: const Icon(Icons.lock,
+                    prefixIcon: const Icon(Icons.lock,
                         color: Color(0xff212435), size: 24),
                   ),
                 ),
@@ -266,7 +284,7 @@ class RegisterScreen extends StatelessWidget {
                       overflow: TextOverflow.clip,
                       style: TextStyle(
                         fontWeight: FontWeight.w400,
-						            fontStyle: FontStyle.normal,
+                        fontStyle: FontStyle.normal,
                         fontSize: 14,
                         color: Color(0xff000000),
                       ),
@@ -275,7 +293,9 @@ class RegisterScreen extends StatelessWidget {
                       padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
                       child: GestureDetector(
                         onTap: () {
-                          Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> const HomePage()));
+                          Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(
+                                  builder: (context) => const HomePage()));
                         },
                         child: const Text(
                           "Log In",

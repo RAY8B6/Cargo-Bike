@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'startDeliveryScreen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -18,13 +19,14 @@ class Edit_Delivery extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: "Edit delivery page",
-      home: EditDeliveryPage(index: number,),
+      home: EditDeliveryPage(
+        index: number,
+      ),
     );
   }
 }
 
 class EditDeliveryPage extends StatefulWidget {
-
   @override
   const EditDeliveryPage({super.key, required this.index});
   final int index;
@@ -32,12 +34,14 @@ class EditDeliveryPage extends StatefulWidget {
 }
 
 class _EditDeliveryPageState extends State<EditDeliveryPage> {
-
   Future<List<String>> getUserData({required BuildContext context}) async {
     List<String> result = [];
     final supabase = Supabase.instance.client;
-    var deliveryInfos = await supabase.from('deliveries').select('id, nb_customers, nb_packages, points, status').eq('id', (widget.index).toString());
-    if(deliveryInfos.toString() != "[]"){
+    var deliveryInfos = await supabase
+        .from('deliveries')
+        .select('id, nb_customers, nb_packages, points, status')
+        .eq('id', (widget.index).toString());
+    if (deliveryInfos.toString() != "[]") {
       Id = deliveryInfos[0]['id'].toString();
       Nb_Customers = deliveryInfos[0]['nb_customers'].toString();
       Status = deliveryInfos[0]['status'];
@@ -50,15 +54,21 @@ class _EditDeliveryPageState extends State<EditDeliveryPage> {
 
   Future deleteDelivery({required BuildContext context}) async {
     final supabase = Supabase.instance.client;
-    await supabase.from('packages').delete().eq('delivery_id', (widget.index + 1).toString());
-    await supabase.from('deliveries').delete().eq('id', (widget.index + 1).toString());
+    await supabase
+        .from('packages')
+        .delete()
+        .eq('delivery_id', (widget.index + 1).toString());
+    await supabase
+        .from('deliveries')
+        .delete()
+        .eq('id', (widget.index + 1).toString());
   }
 
   String _hintIdText = "";
   String _hintNbCustomersText = "";
   String _hintStatusText = "";
   void changeHintText(List<String> list) {
-    if(this.mounted && list.isNotEmpty){
+    if (this.mounted && list.isNotEmpty) {
       setState(() {
         _hintIdText = list[0];
         _hintNbCustomersText = list[1];
@@ -67,11 +77,9 @@ class _EditDeliveryPageState extends State<EditDeliveryPage> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
-
-    if(_hintIdText == ""){
+    if (_hintIdText == "") {
       Future<List<String>> result = getUserData(context: context);
 
       result.then((deliveryData) {
@@ -83,17 +91,23 @@ class _EditDeliveryPageState extends State<EditDeliveryPage> {
     return Scaffold(
       appBar: AppBar(
         leading: InkWell(
-          child: const Icon(Icons.arrow_back, color: Colors.white,),
-          onTap: (){
-            Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> const DeliveryPage()));
+          child: const Icon(
+            Icons.arrow_back,
+            color: Colors.white,
+          ),
+          onTap: () {
+            Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (context) => const DeliveryPage()));
           },
         ),
-        brightness: Brightness.light,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
         iconTheme: const IconThemeData(color: Colors.white),
         backgroundColor: Colors.blue,
-        title: const Text("Edit selected delivery", style: TextStyle(color: Colors.white),),
+        title: const Text(
+          "Edit selected delivery",
+          style: TextStyle(color: Colors.white),
+        ),
       ),
-
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: SingleChildScrollView(
@@ -133,17 +147,17 @@ class _EditDeliveryPageState extends State<EditDeliveryPage> {
                     disabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide:
-                      const BorderSide(color: Color(0xff3a57e8), width: 1),
+                          const BorderSide(color: Color(0xff3a57e8), width: 1),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide:
-                      const BorderSide(color: Color(0xff3a57e8), width: 1),
+                          const BorderSide(color: Color(0xff3a57e8), width: 1),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide:
-                      const BorderSide(color: Color(0xff3a57e8), width: 1),
+                          const BorderSide(color: Color(0xff3a57e8), width: 1),
                     ),
                     hintText: "Id : $_hintIdText",
                     hintStyle: const TextStyle(
@@ -156,11 +170,10 @@ class _EditDeliveryPageState extends State<EditDeliveryPage> {
                     fillColor: const Color(0xffffffff),
                     isDense: false,
                     contentPadding:
-                    const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                        const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                   ),
                 ),
               ),
-
               const Padding(
                 padding: EdgeInsets.fromLTRB(0, 16, 0, 0),
                 child: Text(
@@ -175,8 +188,6 @@ class _EditDeliveryPageState extends State<EditDeliveryPage> {
                   ),
                 ),
               ),
-
-
               Padding(
                 padding: const EdgeInsets.fromLTRB(0, 16, 0, 0),
                 child: TextField(
@@ -193,17 +204,17 @@ class _EditDeliveryPageState extends State<EditDeliveryPage> {
                     disabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide:
-                      const BorderSide(color: Color(0xff3a57e8), width: 1),
+                          const BorderSide(color: Color(0xff3a57e8), width: 1),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide:
-                      const BorderSide(color: Color(0xff3a57e8), width: 1),
+                          const BorderSide(color: Color(0xff3a57e8), width: 1),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide:
-                      const BorderSide(color: Color(0xff3a57e8), width: 1),
+                          const BorderSide(color: Color(0xff3a57e8), width: 1),
                     ),
                     hintText: _hintNbCustomersText,
                     hintStyle: const TextStyle(
@@ -216,11 +227,10 @@ class _EditDeliveryPageState extends State<EditDeliveryPage> {
                     fillColor: const Color(0xffffffff),
                     isDense: false,
                     contentPadding:
-                    const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                        const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                   ),
                 ),
               ),
-
               const Padding(
                 padding: EdgeInsets.fromLTRB(0, 16, 0, 0),
                 child: Text(
@@ -235,7 +245,6 @@ class _EditDeliveryPageState extends State<EditDeliveryPage> {
                   ),
                 ),
               ),
-
               Padding(
                 padding: const EdgeInsets.fromLTRB(0, 16, 0, 0),
                 child: TextField(
@@ -252,17 +261,17 @@ class _EditDeliveryPageState extends State<EditDeliveryPage> {
                     disabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide:
-                      const BorderSide(color: Color(0xff3a57e8), width: 1),
+                          const BorderSide(color: Color(0xff3a57e8), width: 1),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide:
-                      const BorderSide(color: Color(0xff3a57e8), width: 1),
+                          const BorderSide(color: Color(0xff3a57e8), width: 1),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide:
-                      const BorderSide(color: Color(0xff3a57e8), width: 1),
+                          const BorderSide(color: Color(0xff3a57e8), width: 1),
                     ),
                     hintText: _hintStatusText,
                     hintStyle: const TextStyle(
@@ -275,16 +284,14 @@ class _EditDeliveryPageState extends State<EditDeliveryPage> {
                     fillColor: const Color(0xffffffff),
                     isDense: false,
                     contentPadding:
-                    const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                        const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                   ),
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(0, 16, 0, 0),
                 child: MaterialButton(
-                  onPressed: () {
-
-                  },
+                  onPressed: () {},
                   color: const Color(0xff3a57e8),
                   elevation: 0,
                   shape: RoundedRectangleBorder(
@@ -331,7 +338,10 @@ class _EditDeliveryPageState extends State<EditDeliveryPage> {
                               child: const Text('Delete'),
                               onPressed: () {
                                 deleteDelivery(context: context);
-                                Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> const DeliveryPage()));
+                                Navigator.of(context).pushReplacement(
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const DeliveryPage()));
                               },
                             ),
                           ],
@@ -362,8 +372,6 @@ class _EditDeliveryPageState extends State<EditDeliveryPage> {
           ),
         ),
       ),
-
     );
   }
-
 }

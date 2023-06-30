@@ -2,6 +2,7 @@ import 'package:application_cargo/main.dart';
 import 'package:application_cargo/map/home_map.dart';
 import 'package:application_cargo/settings.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'startDeliveryScreen.dart';
@@ -10,41 +11,42 @@ import 'package:permission_handler/permission_handler.dart';
 
 bool permissions = false;
 
-class DashboardScreen extends StatefulWidget{
+class DashboardScreen extends StatefulWidget {
   const DashboardScreen({Key? key}) : super(key: key);
 
   @override
   _DashboardScreenState createState() => _DashboardScreenState();
 }
 
-class _DashboardScreenState extends State<DashboardScreen>{
-
+class _DashboardScreenState extends State<DashboardScreen> {
   final supabase = Supabase.instance.client;
   User? user;
 
   Future getUserData({required BuildContext context}) async {
     final supabase = Supabase.instance.client;
-    var userInfos = await supabase.from('profiles').select('id, first_name, last_name, profile_picture, has_permissions').eq('id', supabase.auth.currentUser?.id.toString());
+    var userInfos = await supabase
+        .from('profiles')
+        .select('id, first_name, last_name, profile_picture, has_permissions')
+        .eq('id', supabase.auth.currentUser?.id.toString());
     permissions = userInfos[0]['has_permissions'];
   }
-  
-  //Dashboard items
-  Card makeDashboardItem(String title, String img, int index){
 
+  //Dashboard items
+  Card makeDashboardItem(String title, String img, int index) {
     return Card(
       elevation: 2,
       margin: const EdgeInsets.all(8),
       child: Container(
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(5),
-            gradient: const LinearGradient(
-              begin: FractionalOffset(0.0, 0.0),
-              end: FractionalOffset(3.0, -1.0),
-              colors: [
-                Color(0xFF00488D),
-                Color(0xFFFFFFFF),
-              ],
-            ),
+          borderRadius: BorderRadius.circular(5),
+          gradient: const LinearGradient(
+            begin: FractionalOffset(0.0, 0.0),
+            end: FractionalOffset(3.0, -1.0),
+            colors: [
+              Color(0xFF00488D),
+              Color(0xFFFFFFFF),
+            ],
+          ),
           boxShadow: const [
             BoxShadow(
               color: Colors.white,
@@ -55,26 +57,29 @@ class _DashboardScreenState extends State<DashboardScreen>{
         ),
         child: InkWell(
           onTap: () async {
-            if(index==0){
+            if (index == 0) {
               await Permission.locationWhenInUse.request();
 
-              if (await Permission.locationWhenInUse.request().isGranted){
-                Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> Home_Map(title: "Map", points: [],idLiv: 2,)));
+              if (await Permission.locationWhenInUse.request().isGranted) {
+                Navigator.of(context).pushReplacement(MaterialPageRoute(
+                    builder: (context) => Home_Map(
+                          title: "Map",
+                          points: [],
+                          idLiv: 2,
+                        )));
               }
             }
-            if(index==1){
-              Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> DeliveryPage()));
+            if (index == 1) {
+              Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (context) => DeliveryPage()));
             }
-            if(index==2){
-
-            }
-            if(index==3){
-              Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> SettingsPage()));
+            if (index == 2) {}
+            if (index == 3) {
+              Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (context) => SettingsPage()));
             }
             //Logout button
-            if(index==4){
-
-            }
+            if (index == 4) {}
           },
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -108,13 +113,16 @@ class _DashboardScreenState extends State<DashboardScreen>{
   }
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     getUserData(context: context);
     return Scaffold(
       appBar: AppBar(
         leading: InkWell(
-          child: const Icon(Icons.logout, color: Colors.white,),
-          onTap: (){
+          child: const Icon(
+            Icons.logout,
+            color: Colors.white,
+          ),
+          onTap: () {
             supabase.auth.signOut();
             showDialog<String>(
               context: context,
@@ -125,7 +133,8 @@ class _DashboardScreenState extends State<DashboardScreen>{
                   TextButton(
                       onPressed: () {
                         Navigator.pop(context, "Ok");
-                        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> const HomePage()));
+                        Navigator.of(context).pushReplacement(MaterialPageRoute(
+                            builder: (context) => const HomePage()));
                       },
                       child: const Text("Ok")),
                 ],
@@ -133,12 +142,14 @@ class _DashboardScreenState extends State<DashboardScreen>{
             );
           },
         ),
-        brightness: Brightness.light,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
         iconTheme: const IconThemeData(color: Colors.white),
         backgroundColor: Colors.blue,
-        title: const Text("Dashboard", style: TextStyle(color: Colors.white),),
-      ) ,
-
+        title: const Text(
+          "Dashboard",
+          style: TextStyle(color: Colors.white),
+        ),
+      ),
       backgroundColor: const Color.fromARGB(255, 170, 193, 232),
       body: Column(
         children: [
@@ -149,9 +160,10 @@ class _DashboardScreenState extends State<DashboardScreen>{
               padding: const EdgeInsets.all(2),
               children: [
                 //index number 0
-                makeDashboardItem("Map", "assets/map.png", 0),
+                //makeDashboardItem("Map", "assets/map.png", 0),
                 makeDashboardItem("Start Delivery", "assets/delivery.png", 1),
-                makeDashboardItem("Turn On/Off Motor", "assets/power_button.png", 2),
+                //makeDashboardItem(
+                //   "Turn On/Off Motor", "assets/power_button.png", 2),
                 makeDashboardItem("Manage Settings", "assets/settings.png", 3),
               ],
             ),
@@ -161,4 +173,3 @@ class _DashboardScreenState extends State<DashboardScreen>{
     );
   }
 }
-

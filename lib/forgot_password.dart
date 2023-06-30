@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:application_cargo/main.dart';
 
 class ForgotPasswordScreen extends StatelessWidget {
-
   final supabase = Supabase.instance.client;
   User? user;
   TextEditingController emailController = TextEditingController();
@@ -14,15 +14,22 @@ class ForgotPasswordScreen extends StatelessWidget {
       backgroundColor: const Color(0xffffffff),
       appBar: AppBar(
         leading: InkWell(
-          child: const Icon(Icons.arrow_back, color: Colors.white,),
-          onTap: (){
-            Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> const HomePage()));
+          child: const Icon(
+            Icons.arrow_back,
+            color: Colors.white,
+          ),
+          onTap: () {
+            Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (context) => const HomePage()));
           },
         ),
-        brightness: Brightness.light,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
         iconTheme: const IconThemeData(color: Colors.white),
         backgroundColor: Colors.blue,
-        title: const Text("", style: TextStyle(color: Colors.white),),
+        title: const Text(
+          "",
+          style: TextStyle(color: Colors.white),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -63,17 +70,17 @@ class ForgotPasswordScreen extends StatelessWidget {
                     disabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide:
-                      const BorderSide(color: Color(0xff3a57e8), width: 1),
+                          const BorderSide(color: Color(0xff3a57e8), width: 1),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide:
-                      const BorderSide(color: Color(0xff3a57e8), width: 1),
+                          const BorderSide(color: Color(0xff3a57e8), width: 1),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide:
-                      const BorderSide(color: Color(0xff3a57e8), width: 1),
+                          const BorderSide(color: Color(0xff3a57e8), width: 1),
                     ),
                     hintText: "Email Address",
                     hintStyle: const TextStyle(
@@ -86,9 +93,9 @@ class ForgotPasswordScreen extends StatelessWidget {
                     fillColor: const Color(0xffffffff),
                     isDense: false,
                     contentPadding:
-                    const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                    prefixIcon:
-                    const Icon(Icons.mail, color: Color(0xff212435), size: 24),
+                        const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                    prefixIcon: const Icon(Icons.mail,
+                        color: Color(0xff212435), size: 24),
                   ),
                 ),
               ),
@@ -97,8 +104,10 @@ class ForgotPasswordScreen extends StatelessWidget {
                 child: MaterialButton(
                   onPressed: () async {
                     try {
-                      await supabase.auth.resetPasswordForEmail(emailController.text);
-                      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> const HomePage()));
+                      await supabase.auth
+                          .resetPasswordForEmail(emailController.text);
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(
+                          builder: (context) => const HomePage()));
                     } on AuthException catch (e) {
                       print(e);
                     }
@@ -128,6 +137,4 @@ class ForgotPasswordScreen extends StatelessWidget {
       ),
     );
   }
-
-
 }

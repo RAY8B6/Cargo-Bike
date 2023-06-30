@@ -5,10 +5,10 @@ import 'dart:typed_data';
 
 import 'package:application_cargo/customize_profile.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
 import 'startDeliveryScreen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-
 
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -35,15 +35,14 @@ class Add_Delivery extends StatelessWidget {
 }
 
 class AddDeliveryPage extends StatefulWidget {
-
   @override
   _AddDeliveryPageState createState() => _AddDeliveryPageState();
 }
 
 class _AddDeliveryPageState extends State<AddDeliveryPage> {
-
   Future<List<double>> getCoordinates(String address) async {
-    final apiUrl = 'https://nominatim.openstreetmap.org/search?q=$address&format=json&limit=1';
+    final apiUrl =
+        'https://nominatim.openstreetmap.org/search?q=$address&format=json&limit=1';
 
     final response = await http.get(Uri.parse(apiUrl));
     final data = json.decode(response.body);
@@ -67,7 +66,8 @@ class _AddDeliveryPageState extends State<AddDeliveryPage> {
           ],
         ),
       );
-      throw Exception('Failed to retrieve coordinates from OpenStreetMap Nominatim API.');
+      throw Exception(
+          'Failed to retrieve coordinates from OpenStreetMap Nominatim API.');
     }
   }
 
@@ -76,14 +76,17 @@ class _AddDeliveryPageState extends State<AddDeliveryPage> {
     final supabase = Supabase.instance.client;
     String error = "";
 
-    if (deliveryIdController.text.isEmpty || deliveryAddressController.text.isEmpty || firstNameController.text.isEmpty || lastNameController.text.isEmpty){
-      if (deliveryIdController.text.isEmpty){
+    if (deliveryIdController.text.isEmpty ||
+        deliveryAddressController.text.isEmpty ||
+        firstNameController.text.isEmpty ||
+        lastNameController.text.isEmpty) {
+      if (deliveryIdController.text.isEmpty) {
         error = "No delivery Id entered";
       }
-      if (deliveryAddressController.text.isEmpty){
+      if (deliveryAddressController.text.isEmpty) {
         error = "No delivery address entered";
       }
-      if (firstNameController.text.isEmpty || lastNameController.text.isEmpty){
+      if (firstNameController.text.isEmpty || lastNameController.text.isEmpty) {
         error = "Wrong customers informations";
       }
       showDialog<String>(
@@ -103,24 +106,32 @@ class _AddDeliveryPageState extends State<AddDeliveryPage> {
       throw Exception("Error");
     }
 
-    var delivery = await supabase.from('deliveries').select('id').eq('id', deliveryIdController.text);
-    if (delivery.toString() != "[]"){
+    var delivery = await supabase
+        .from('deliveries')
+        .select('id')
+        .eq('id', deliveryIdController.text);
+    if (delivery.toString() != "[]") {
       deliveryIdState = "Exist";
-    }
-    else{
+    } else {
       deliveryIdState = "Doesn't exist";
     }
 
-    var customer = await supabase.from('customers').select('id, first_name, last_name').eq('first_name', firstNameController.text).eq('last_name', lastNameController.text);
-    if (customer.toString() != "[]"){
+    var customer = await supabase
+        .from('customers')
+        .select('id, first_name, last_name')
+        .eq('first_name', firstNameController.text)
+        .eq('last_name', lastNameController.text);
+    if (customer.toString() != "[]") {
       customerState = "Exist";
-    }
-    else{
+    } else {
       customerState = "Doesn't exist";
     }
 
-    var package = await supabase.from('packages').select('id').eq('id', packageIdController.text);
-    if (package.toString() != "[]"){
+    var package = await supabase
+        .from('packages')
+        .select('id')
+        .eq('id', packageIdController.text);
+    if (package.toString() != "[]") {
       error = "Package Id already taken";
       packageIdState = "Exist";
       showDialog<String>(
@@ -138,8 +149,7 @@ class _AddDeliveryPageState extends State<AddDeliveryPage> {
         ),
       );
       throw Exception("Error");
-    }
-    else{
+    } else {
       packageIdState = "Doesn't exist";
     }
 
@@ -147,36 +157,65 @@ class _AddDeliveryPageState extends State<AddDeliveryPage> {
     final List<double> coordinates = coord;
 
     // ignore: unrelated_type_equality_checks
-    if (packageIdState == "Doesn't exist" && deliveryIdController.text.isNotEmpty && deliveryAddressController.text.isNotEmpty){
-      if (customerState == "Doesn't exist"){
-        await supabase.from('customers').insert({'first_name': firstNameController.text, "last_name": lastNameController.text});
+    if (packageIdState == "Doesn't exist" &&
+        deliveryIdController.text.isNotEmpty &&
+        deliveryAddressController.text.isNotEmpty) {
+      if (customerState == "Doesn't exist") {
+        await supabase.from('customers').insert({
+          'first_name': firstNameController.text,
+          "last_name": lastNameController.text
+        });
       }
-      if (deliveryIdState == "Doesn't exist"){
-
-        await supabase.from('deliveries').insert({'id': deliveryIdController.text, "nb_customers": 1, "nb_packages": 1, "points": [coordinates], "status": "available" });
-
-      }
-      else{
-        List<dynamic> addresses = await supabase.from('deliveries').select('points').eq('id', deliveryIdController.text);
-        var customers = await supabase.from('deliveries').select('nb_customers').eq('id', deliveryIdController.text);
-        var packages = await supabase.from('deliveries').select('nb_packages').eq('id', deliveryIdController.text);
+      if (deliveryIdState == "Doesn't exist") {
+        await supabase.from('deliveries').insert({
+          'id': deliveryIdController.text,
+          "nb_customers": 1,
+          "nb_packages": 1,
+          "points": [coordinates],
+          "status": "available"
+        });
+      } else {
+        List<dynamic> addresses = await supabase
+            .from('deliveries')
+            .select('points')
+            .eq('id', deliveryIdController.text);
+        var customers = await supabase
+            .from('deliveries')
+            .select('nb_customers')
+            .eq('id', deliveryIdController.text);
+        var packages = await supabase
+            .from('deliveries')
+            .select('nb_packages')
+            .eq('id', deliveryIdController.text);
         int value_packages = packages[0]['nb_packages'];
         int value_customers = customers[0]['nb_customers'];
         List<dynamic> value_points = addresses[0]['points'];
         value_points.add(coordinates);
-        await supabase.from('deliveries').update({'nb_customers' : value_customers += 1, 'nb_packages' : value_packages += 1, 'points' : value_points}).match({'id' : deliveryIdController.text});
+        await supabase.from('deliveries').update({
+          'nb_customers': value_customers += 1,
+          'nb_packages': value_packages += 1,
+          'points': value_points
+        }).match({'id': deliveryIdController.text});
       }
 
-      await supabase.from('packages').insert({'id': packageIdController.text, "delivery_id": deliveryIdController.text, "customer_id": 3, "delivery_address": deliveryAddressController.text});
+      await supabase.from('packages').insert({
+        'id': packageIdController.text,
+        "delivery_id": deliveryIdController.text,
+        "customer_id": 3,
+        "delivery_address": deliveryAddressController.text
+      });
 
       showDialog<String>(
         context: context,
         builder: (BuildContext context) => AlertDialog(
           title: const Text("Success"),
-          content: const Text("The delivery was successfully created or updated"),
+          content:
+              const Text("The delivery was successfully created or updated"),
           actions: [
             TextButton(
-                onPressed: () => Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> const DeliveryPage())),
+                onPressed: () => Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(
+                        builder: (context) => const DeliveryPage())),
                 child: const Text("Ok"))
           ],
         ),
@@ -186,19 +225,25 @@ class _AddDeliveryPageState extends State<AddDeliveryPage> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         leading: InkWell(
-          child: const Icon(Icons.arrow_back, color: Colors.white,),
-          onTap: (){
-            Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> const DeliveryPage()));
+          child: const Icon(
+            Icons.arrow_back,
+            color: Colors.white,
+          ),
+          onTap: () {
+            Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (context) => const DeliveryPage()));
           },
         ),
-        brightness: Brightness.light,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
         iconTheme: const IconThemeData(color: Colors.white),
         backgroundColor: Colors.blue,
-        title: const Text("Add a new package", style: TextStyle(color: Colors.white),),
+        title: const Text(
+          "Add a new package",
+          style: TextStyle(color: Colors.white),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -238,17 +283,17 @@ class _AddDeliveryPageState extends State<AddDeliveryPage> {
                     disabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide:
-                      const BorderSide(color: Color(0xff3a57e8), width: 1),
+                          const BorderSide(color: Color(0xff3a57e8), width: 1),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide:
-                      const BorderSide(color: Color(0xff3a57e8), width: 1),
+                          const BorderSide(color: Color(0xff3a57e8), width: 1),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide:
-                      const BorderSide(color: Color(0xff3a57e8), width: 1),
+                          const BorderSide(color: Color(0xff3a57e8), width: 1),
                     ),
                     hintText: "Id",
                     hintStyle: const TextStyle(
@@ -261,11 +306,10 @@ class _AddDeliveryPageState extends State<AddDeliveryPage> {
                     fillColor: const Color(0xffffffff),
                     isDense: false,
                     contentPadding:
-                    const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                        const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                   ),
                 ),
               ),
-
               const Padding(
                 padding: EdgeInsets.fromLTRB(0, 16, 0, 0),
                 child: Text(
@@ -296,17 +340,17 @@ class _AddDeliveryPageState extends State<AddDeliveryPage> {
                     disabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide:
-                      const BorderSide(color: Color(0xff3a57e8), width: 1),
+                          const BorderSide(color: Color(0xff3a57e8), width: 1),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide:
-                      const BorderSide(color: Color(0xff3a57e8), width: 1),
+                          const BorderSide(color: Color(0xff3a57e8), width: 1),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide:
-                      const BorderSide(color: Color(0xff3a57e8), width: 1),
+                          const BorderSide(color: Color(0xff3a57e8), width: 1),
                     ),
                     hintText: "First name",
                     hintStyle: const TextStyle(
@@ -319,7 +363,7 @@ class _AddDeliveryPageState extends State<AddDeliveryPage> {
                     fillColor: const Color(0xffffffff),
                     isDense: false,
                     contentPadding:
-                    const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                        const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                   ),
                 ),
               ),
@@ -339,17 +383,17 @@ class _AddDeliveryPageState extends State<AddDeliveryPage> {
                     disabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide:
-                      const BorderSide(color: Color(0xff3a57e8), width: 1),
+                          const BorderSide(color: Color(0xff3a57e8), width: 1),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide:
-                      const BorderSide(color: Color(0xff3a57e8), width: 1),
+                          const BorderSide(color: Color(0xff3a57e8), width: 1),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide:
-                      const BorderSide(color: Color(0xff3a57e8), width: 1),
+                          const BorderSide(color: Color(0xff3a57e8), width: 1),
                     ),
                     hintText: "Last name",
                     hintStyle: const TextStyle(
@@ -362,12 +406,10 @@ class _AddDeliveryPageState extends State<AddDeliveryPage> {
                     fillColor: const Color(0xffffffff),
                     isDense: false,
                     contentPadding:
-                    const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                        const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                   ),
                 ),
               ),
-
-
               const Padding(
                 padding: EdgeInsets.fromLTRB(0, 16, 0, 0),
                 child: Text(
@@ -398,17 +440,17 @@ class _AddDeliveryPageState extends State<AddDeliveryPage> {
                     disabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide:
-                      const BorderSide(color: Color(0xff3a57e8), width: 1),
+                          const BorderSide(color: Color(0xff3a57e8), width: 1),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide:
-                      const BorderSide(color: Color(0xff3a57e8), width: 1),
+                          const BorderSide(color: Color(0xff3a57e8), width: 1),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide:
-                      const BorderSide(color: Color(0xff3a57e8), width: 1),
+                          const BorderSide(color: Color(0xff3a57e8), width: 1),
                     ),
                     hintText: "Id",
                     hintStyle: const TextStyle(
@@ -421,7 +463,7 @@ class _AddDeliveryPageState extends State<AddDeliveryPage> {
                     fillColor: const Color(0xffffffff),
                     isDense: false,
                     contentPadding:
-                    const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                        const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                   ),
                 ),
               ),
@@ -441,17 +483,17 @@ class _AddDeliveryPageState extends State<AddDeliveryPage> {
                     disabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide:
-                      const BorderSide(color: Color(0xff3a57e8), width: 1),
+                          const BorderSide(color: Color(0xff3a57e8), width: 1),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide:
-                      const BorderSide(color: Color(0xff3a57e8), width: 1),
+                          const BorderSide(color: Color(0xff3a57e8), width: 1),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide:
-                      const BorderSide(color: Color(0xff3a57e8), width: 1),
+                          const BorderSide(color: Color(0xff3a57e8), width: 1),
                     ),
                     hintText: "Delivery address",
                     hintStyle: const TextStyle(
@@ -464,11 +506,10 @@ class _AddDeliveryPageState extends State<AddDeliveryPage> {
                     fillColor: const Color(0xffffffff),
                     isDense: false,
                     contentPadding:
-                    const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                        const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                   ),
                 ),
               ),
-
               Padding(
                 padding: const EdgeInsets.fromLTRB(0, 16, 0, 0),
                 child: MaterialButton(
@@ -498,7 +539,7 @@ class _AddDeliveryPageState extends State<AddDeliveryPage> {
                 padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
                 child: Text(
                   "Note : If the delivery Id does not exist, it will create a new delivery with all the information entered above."
-                      "\nYou can delete a selected delivery using the Edit selected delivery page.",
+                  "\nYou can delete a selected delivery using the Edit selected delivery page.",
                   textAlign: TextAlign.center,
                   overflow: TextOverflow.clip,
                   style: TextStyle(
@@ -515,5 +556,4 @@ class _AddDeliveryPageState extends State<AddDeliveryPage> {
       ),
     );
   }
-
 }

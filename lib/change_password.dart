@@ -1,16 +1,16 @@
 import 'package:application_cargo/main.dart';
 import 'package:application_cargo/settings.dart';
+import 'package:flutter/services.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:application_cargo/dashboard.dart';
 
 class ChangePasswordScreen extends StatelessWidget {
-
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
 
   Future changePwd({required BuildContext context}) async {
-    if(confirmPasswordController.text != passwordController.text){
+    if (confirmPasswordController.text != passwordController.text) {
       showDialog<String>(
         context: context,
         builder: (BuildContext context) => AlertDialog(
@@ -37,7 +37,8 @@ class ChangePasswordScreen extends StatelessWidget {
           content: const Text("Password modified !"),
           actions: [
             TextButton(
-                onPressed: () => Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> SettingsPage())),
+                onPressed: () => Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (context) => SettingsPage())),
                 child: const Text("Ok"))
           ],
         ),
@@ -51,15 +52,22 @@ class ChangePasswordScreen extends StatelessWidget {
       backgroundColor: const Color(0xffffffff),
       appBar: AppBar(
         leading: InkWell(
-          child: const Icon(Icons.arrow_back, color: Colors.white,),
-          onTap: (){
-            Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> SettingsPage()));
+          child: const Icon(
+            Icons.arrow_back,
+            color: Colors.white,
+          ),
+          onTap: () {
+            Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (context) => SettingsPage()));
           },
         ),
-        brightness: Brightness.light,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
         iconTheme: const IconThemeData(color: Colors.white),
         backgroundColor: Colors.blue,
-        title: const Text("Change password", style: TextStyle(color: Colors.white),),
+        title: const Text(
+          "Change password",
+          style: TextStyle(color: Colors.white),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -100,17 +108,17 @@ class ChangePasswordScreen extends StatelessWidget {
                     disabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide:
-                      const BorderSide(color: Color(0xff3a57e8), width: 1),
+                          const BorderSide(color: Color(0xff3a57e8), width: 1),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide:
-                      const BorderSide(color: Color(0xff3a57e8), width: 1),
+                          const BorderSide(color: Color(0xff3a57e8), width: 1),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide:
-                      const BorderSide(color: Color(0xff3a57e8), width: 1),
+                          const BorderSide(color: Color(0xff3a57e8), width: 1),
                     ),
                     hintText: "Password",
                     hintStyle: const TextStyle(
@@ -123,7 +131,7 @@ class ChangePasswordScreen extends StatelessWidget {
                     fillColor: const Color(0xffffffff),
                     isDense: false,
                     contentPadding:
-                    const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                        const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                     prefixIcon: const Icon(Icons.lock,
                         color: Color(0xff212435), size: 24),
                   ),
@@ -146,17 +154,17 @@ class ChangePasswordScreen extends StatelessWidget {
                     disabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide:
-                      const BorderSide(color: Color(0xff3a57e8), width: 1),
+                          const BorderSide(color: Color(0xff3a57e8), width: 1),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide:
-                      const BorderSide(color: Color(0xff3a57e8), width: 1),
+                          const BorderSide(color: Color(0xff3a57e8), width: 1),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide:
-                      const BorderSide(color: Color(0xff3a57e8), width: 1),
+                          const BorderSide(color: Color(0xff3a57e8), width: 1),
                     ),
                     hintText: "Confirm Password",
                     hintStyle: const TextStyle(
@@ -169,7 +177,7 @@ class ChangePasswordScreen extends StatelessWidget {
                     fillColor: const Color(0xffffffff),
                     isDense: false,
                     contentPadding:
-                    const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                        const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                     prefixIcon: const Icon(Icons.lock,
                         color: Color(0xff212435), size: 24),
                   ),

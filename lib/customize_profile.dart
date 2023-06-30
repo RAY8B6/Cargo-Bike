@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:application_cargo/settings.dart';
+import 'package:flutter/services.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 String firstName = '';
@@ -19,16 +20,17 @@ class SettingsUI extends StatelessWidget {
 }
 
 class EditProfilePage extends StatefulWidget {
-
   @override
   _EditProfilePageState createState() => _EditProfilePageState();
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
-
   Future getUserData({required BuildContext context}) async {
     final supabase = Supabase.instance.client;
-    var userInfos = await supabase.from('profiles').select('id, first_name, last_name, profile_picture').eq('id', supabase.auth.currentUser?.id.toString());
+    var userInfos = await supabase
+        .from('profiles')
+        .select('id, first_name, last_name, profile_picture')
+        .eq('id', supabase.auth.currentUser?.id.toString());
     firstName = userInfos[0]['first_name'];
     lastName = userInfos[0]['last_name'];
     profilePicture = userInfos[0]['profile_picture'];
@@ -38,13 +40,19 @@ class _EditProfilePageState extends State<EditProfilePage> {
   Future updateUserData({required BuildContext context}) async {
     getUserData(context: context);
     final supabase = Supabase.instance.client;
-    if (fnameController.text != firstName && fnameController.text.isNotEmpty){
-      await supabase.from('profiles').update({'first_name' : fnameController.text}).match({'id' : supabase.auth.currentUser?.id.toString()});
+    if (fnameController.text != firstName && fnameController.text.isNotEmpty) {
+      await supabase
+          .from('profiles')
+          .update({'first_name': fnameController.text}).match(
+              {'id': supabase.auth.currentUser?.id.toString()});
     }
-    if (lnameController.text != lastName && lnameController.text.isNotEmpty){
-      await supabase.from('profiles').update({'last_name' : lnameController.text}).match({'id' : supabase.auth.currentUser?.id.toString()});
+    if (lnameController.text != lastName && lnameController.text.isNotEmpty) {
+      await supabase
+          .from('profiles')
+          .update({'last_name': lnameController.text}).match(
+              {'id': supabase.auth.currentUser?.id.toString()});
     }
-    if (emailController.text != email && emailController.text.isNotEmpty){
+    if (emailController.text != email && emailController.text.isNotEmpty) {
       supabase.auth.updateUser(
         UserAttributes(
           email: emailController.text,
@@ -60,21 +68,27 @@ class _EditProfilePageState extends State<EditProfilePage> {
   bool showPassword = false;
   @override
   Widget build(BuildContext context) {
-
     getUserData(context: context);
 
     return Scaffold(
       appBar: AppBar(
         leading: InkWell(
-          child: const Icon(Icons.arrow_back, color: Colors.white,),
-          onTap: (){
-            Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> SettingsPage()));
+          child: const Icon(
+            Icons.arrow_back,
+            color: Colors.white,
+          ),
+          onTap: () {
+            Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (context) => SettingsPage()));
           },
         ),
-        brightness: Brightness.light,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
         iconTheme: const IconThemeData(color: Colors.white),
         backgroundColor: Colors.blue,
-        title: const Text("Edit your profile", style: TextStyle(color: Colors.white),),
+        title: const Text(
+          "Edit your profile",
+          style: TextStyle(color: Colors.white),
+        ),
       ),
       body: Container(
         padding: const EdgeInsets.only(left: 16, top: 25, right: 16),
@@ -129,8 +143,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                             Icons.edit,
                             color: Colors.white,
                           ),
-                        )
-                    ),
+                        )),
                   ],
                 ),
               ),
@@ -149,11 +162,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   labelText: 'First name',
                   floatingLabelBehavior: FloatingLabelBehavior.always,
                   hintText: firstName,
-                    hintStyle: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
+                  hintStyle: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
                 ),
               ),
               const SizedBox(
@@ -211,19 +224,22 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 children: [
                   ElevatedButton(
                     onPressed: () {
-                      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> SettingsPage()));
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(
+                          builder: (context) => SettingsPage()));
                     },
-                    child: const Text("CANCEL", style: TextStyle(
+                    child: const Text("CANCEL",
+                        style: TextStyle(
                             fontSize: 14,
                             letterSpacing: 2.2,
-                            color: Colors.white)
-                    ),
+                            color: Colors.white)),
                   ),
                   ElevatedButton(
                     onPressed: () {
                       updateUserData(context: context);
                     },
-                    child: const Text("SAVE", style: TextStyle(
+                    child: const Text(
+                      "SAVE",
+                      style: TextStyle(
                           fontSize: 14,
                           letterSpacing: 2.2,
                           color: Colors.white),
@@ -237,5 +253,4 @@ class _EditProfilePageState extends State<EditProfilePage> {
       ),
     );
   }
-
 }
