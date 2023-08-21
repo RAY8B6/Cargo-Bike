@@ -1,4 +1,4 @@
-package com.example.application_cargo
+package com.bmoveon.application_cargo
 
 import io.flutter.embedding.android.FlutterActivity
 

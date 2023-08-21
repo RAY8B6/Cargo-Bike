@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:application_cargo/main.dart';
 import 'package:application_cargo/map/home_map.dart';
 import 'package:application_cargo/settings.dart';
@@ -61,8 +63,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
               await Permission.locationWhenInUse.request();
 
               if (await Permission.locationWhenInUse.request().isGranted) {
+                // ignore: use_build_context_synchronously
                 Navigator.of(context).pushReplacement(MaterialPageRoute(
-                    builder: (context) => Home_Map(
+                    builder: (context) => const Home_Map(
                           title: "Map",
                           points: [],
                           idLiv: 2,
@@ -70,11 +73,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
               }
             }
             if (index == 1) {
-              Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (context) => DeliveryPage()));
+              // ignore: use_build_context_synchronously
+              Navigator.of(context).pushReplacement(MaterialPageRoute(
+                  builder: (context) => const DeliveryPage()));
             }
             if (index == 2) {}
             if (index == 3) {
+              // ignore: use_build_context_synchronously
               Navigator.of(context).pushReplacement(
                   MaterialPageRoute(builder: (context) => SettingsPage()));
             }
@@ -160,7 +165,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               padding: const EdgeInsets.all(2),
               children: [
                 //index number 0
-                //makeDashboardItem("Map", "assets/map.png", 0),
+                makeDashboardItem("Map", "assets/map.png", 0),
                 makeDashboardItem("Start Delivery", "assets/delivery.png", 1),
                 //makeDashboardItem(
                 //   "Turn On/Off Motor", "assets/power_button.png", 2),
