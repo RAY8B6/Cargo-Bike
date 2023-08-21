@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.application_cargo">
+    package="com.bmoveon.application_cargo">
    <application
         android:label="B-MoveOn"
         android:name="${applicationName}"

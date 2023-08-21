@@ -52,6 +52,7 @@ class _AddDeliveryPageState extends State<AddDeliveryPage> {
       final lng = double.parse(data[0]['lon']);
       return [lat, lng];
     } else {
+      // ignore: use_build_context_synchronously
       showDialog<String>(
         context: context,
         builder: (BuildContext context) => AlertDialog(
@@ -134,6 +135,7 @@ class _AddDeliveryPageState extends State<AddDeliveryPage> {
     if (package.toString() != "[]") {
       error = "Package Id already taken";
       packageIdState = "Exist";
+      // ignore: use_build_context_synchronously
       showDialog<String>(
         context: context,
         builder: (BuildContext context) => AlertDialog(
@@ -205,6 +207,7 @@ class _AddDeliveryPageState extends State<AddDeliveryPage> {
         "delivery_address": deliveryAddressController.text
       });
 
+      // ignore: use_build_context_synchronously
       showDialog<String>(
         context: context,
         builder: (BuildContext context) => AlertDialog(
@@ -256,7 +259,7 @@ class _AddDeliveryPageState extends State<AddDeliveryPage> {
               const Padding(
                 padding: EdgeInsets.fromLTRB(0, 8, 0, 0),
                 child: Text(
-                  "Delivery informations",
+                  "Delivery information",
                   textAlign: TextAlign.center,
                   overflow: TextOverflow.clip,
                   style: TextStyle(
@@ -295,8 +298,8 @@ class _AddDeliveryPageState extends State<AddDeliveryPage> {
                       borderSide:
                           const BorderSide(color: Color(0xff3a57e8), width: 1),
                     ),
-                    hintText: "Id",
-                    hintStyle: const TextStyle(
+                    labelText: "Delivery number",
+                    labelStyle: const TextStyle(
                       fontWeight: FontWeight.w400,
                       fontStyle: FontStyle.normal,
                       fontSize: 14,
@@ -313,7 +316,7 @@ class _AddDeliveryPageState extends State<AddDeliveryPage> {
               const Padding(
                 padding: EdgeInsets.fromLTRB(0, 16, 0, 0),
                 child: Text(
-                  "Customers informations",
+                  "Customers information",
                   textAlign: TextAlign.center,
                   overflow: TextOverflow.clip,
                   style: TextStyle(
@@ -352,8 +355,8 @@ class _AddDeliveryPageState extends State<AddDeliveryPage> {
                       borderSide:
                           const BorderSide(color: Color(0xff3a57e8), width: 1),
                     ),
-                    hintText: "First name",
-                    hintStyle: const TextStyle(
+                    labelText: "First name",
+                    labelStyle: const TextStyle(
                       fontWeight: FontWeight.w400,
                       fontStyle: FontStyle.normal,
                       fontSize: 14,
@@ -395,8 +398,8 @@ class _AddDeliveryPageState extends State<AddDeliveryPage> {
                       borderSide:
                           const BorderSide(color: Color(0xff3a57e8), width: 1),
                     ),
-                    hintText: "Last name",
-                    hintStyle: const TextStyle(
+                    labelText: "Last name",
+                    labelStyle: const TextStyle(
                       fontWeight: FontWeight.w400,
                       fontStyle: FontStyle.normal,
                       fontSize: 14,
@@ -413,7 +416,7 @@ class _AddDeliveryPageState extends State<AddDeliveryPage> {
               const Padding(
                 padding: EdgeInsets.fromLTRB(0, 16, 0, 0),
                 child: Text(
-                  "Package informations",
+                  "Package information",
                   textAlign: TextAlign.center,
                   overflow: TextOverflow.clip,
                   style: TextStyle(
@@ -452,8 +455,8 @@ class _AddDeliveryPageState extends State<AddDeliveryPage> {
                       borderSide:
                           const BorderSide(color: Color(0xff3a57e8), width: 1),
                     ),
-                    hintText: "Id",
-                    hintStyle: const TextStyle(
+                    labelText: "Package number",
+                    labelStyle: const TextStyle(
                       fontWeight: FontWeight.w400,
                       fontStyle: FontStyle.normal,
                       fontSize: 14,
@@ -495,9 +498,16 @@ class _AddDeliveryPageState extends State<AddDeliveryPage> {
                       borderSide:
                           const BorderSide(color: Color(0xff3a57e8), width: 1),
                     ),
-                    hintText: "Delivery address",
-                    hintStyle: const TextStyle(
+                    labelText: "Delivery address",
+                    labelStyle: const TextStyle(
                       fontWeight: FontWeight.w400,
+                      fontStyle: FontStyle.normal,
+                      fontSize: 14,
+                      color: Color(0xff000000),
+                    ),
+                    hintText:
+                        "Format : n° and name of street, postal code city or province",
+                    hintStyle: const TextStyle(
                       fontStyle: FontStyle.normal,
                       fontSize: 14,
                       color: Color(0xff000000),
