@@ -54,6 +54,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final bool isEmailValidated = EmailValidator.validate(emailController.text);
 
     final supabase = Supabase.instance.client;
+
+    final count = await supabase
+        .from("profiles")
+        .select('*')
+        .eq('email', emailController.text);
+
     try {
       if (!isEmailValidated) {
         showDialog<String>(
@@ -105,6 +111,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
               TextButton(
                   onPressed: () => Navigator.pop(context, "Ok"),
                   child: const Text("Ok"))
+            ],
+          ),
+        );
+      } else if (count.length > 0) {
+        print("found");
+        showDialog<String>(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+            title: const Text("Error"),
+            content: const Text(
+                "This email address already exist. Please sign in or reset your password."),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(
+                        builder: (context) => const LoginScreen())),
+                child: const Text("Ok"),
+              )
             ],
           ),
         );

@@ -58,14 +58,6 @@ class _DeliveryMap extends State<DeliveryMap> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             IconButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              icon: const Icon(
-                Icons.arrow_back,
-              ),
-            ),
-            IconButton(
                 onPressed: () async {
                   getLocation();
                   controller.setZoom(zoomLevel: 18);

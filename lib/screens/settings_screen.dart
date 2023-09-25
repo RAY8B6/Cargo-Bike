@@ -125,46 +125,34 @@ class SettingsPage extends StatelessWidget {
                       builder: (BuildContext context) => AlertDialog(
                         title: const Text("Delete your account ?"),
                         content: const Text(
-                            "Do you really want to delete your account and all your data ?  \n\nIf you select Delete we will delete your account on our server. Your app data will also be deleted and you will not be able to retrieve it. \nSince this is a security-sensitive operation, you eventually are asked to login before your account can be deleted."),
+                            "Do you really want to delete your account and all your data ?  \n\nIf you select Delete we will delete your account on our server. Your app data will also be deleted and you will not be able to retrieve it."),
                         actionsAlignment: MainAxisAlignment.spaceEvenly,
                         actions: [
                           TextButton(
                             onPressed: () {
                               deleteUser();
-                              /*
-                                    showDialog<String>(
-                                        context: context,
-                                        builder: (BuildContext context) =>
-                                            Dialog(
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(8.0),
-                                                child: Column(
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .center,
-                                                  children: <Widget>[
-                                                    const Text(
-                                                        'Your account and your data have been completely removed.'),
-                                                    const SizedBox(
-                                                        height: 15),
-                                                    TextButton(
-                                                      onPressed: () {
-                                                        Navigator.of(context)
-                                                            .pushReplacement(
-                                                                MaterialPageRoute(
-                                                                    builder:
-                                                                        (context) =>
-                                                                            LoginScreen()));
-                                                      },
-                                                      child: const Text('Ok'),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ));*/
+
+                              showDialog<String>(
+                                  context: context,
+                                  builder: (BuildContext context) =>
+                                      AlertDialog(
+                                        title: const Text("Account deleted"),
+                                        content: const Text(
+                                            "Your account and your data have been completely removed."),
+                                        actionsAlignment:
+                                            MainAxisAlignment.spaceEvenly,
+                                        actions: [
+                                          TextButton(
+                                              onPressed: () {
+                                                Navigator.of(context)
+                                                    .pushReplacement(
+                                                        MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                LoginScreen()));
+                                              },
+                                              child: Text("Ok"))
+                                        ],
+                                      ));
                             },
                             child: const Text(
                               'Delete my account',
@@ -210,7 +198,9 @@ class SettingsPage extends StatelessWidget {
     debugPrint("CURRENT USER ID : " + userId.toString());
 
     try {
-      await supabase.from('profiles').delete().eq('id', userId);
+      await supabase
+          .from('profiles')
+          .update({'enabled': false}).eq('id', userId.toString());
       debugPrint("user deleted");
     } on AuthException catch (e) {
       debugPrint(e.message);

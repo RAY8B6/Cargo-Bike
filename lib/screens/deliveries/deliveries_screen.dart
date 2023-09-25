@@ -121,7 +121,9 @@ class _DeliveryPageState extends State<DeliveryPage> {
                     itemCount: deliveries.length,
                     itemBuilder: ((context, index) {
                       final delivery = deliveries[index];
-                      if (delivery['status'] == "Available" &&
+                      if ((delivery['status'])
+                              .toString()
+                              .contains("vailable") &&
                           delivery.isNotEmpty) {
                         return Column(
                           children: [
@@ -172,8 +174,8 @@ class _DeliveryPageState extends State<DeliveryPage> {
                                                                   title: "Map",
                                                                   points:
                                                                       points,
-                                                                  idLiv: delivery[
-                                                                      'id'])));
+                                                                  idLiv:
+                                                                      index)));
                                                 },
                                                 child: Icon(
                                                     Icons.play_arrow_rounded)),
