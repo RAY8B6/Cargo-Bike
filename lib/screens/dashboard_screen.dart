@@ -3,6 +3,7 @@
 import 'package:application_cargo/main.dart';
 import 'package:application_cargo/maps/delivery_map.dart';
 import 'package:application_cargo/screens/settings_screen.dart';
+import 'package:application_cargo/screens/users/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -134,7 +135,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         onPressed: () {
                           Navigator.of(context).pushReplacement(
                               MaterialPageRoute(
-                                  builder: (context) => const HomePage()));
+                                  builder: (context) => const LoginScreen()));
                         },
                         child: const Text("Ok")),
                   ],

@@ -164,8 +164,7 @@ class SplashScreen extends StatelessWidget {
           ],
         ),
       ),
-      defaultNextScreen:
-          (screenToDisplay == "login") ? LoginScreen() : DashboardScreen(),
+      defaultNextScreen: LoginScreen(),
     );
   }
 }
@@ -192,7 +191,7 @@ class _HomePageState extends State<HomePage> {
 
     final session = supabase.auth.currentSession;
     if (session != null) {
-      debugPrint("session not null");
+      debugPrint("session not null§('y(yrtyryryrNNNOT NUULLLLLLLLL!!!!!!");
       //Navigator.of(context).pushReplacement(
       //    MaterialPageRoute(builder: (context) => const DashboardScreen()));
       screenToDisplay = "dashboard";
