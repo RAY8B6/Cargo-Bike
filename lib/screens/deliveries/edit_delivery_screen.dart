@@ -13,7 +13,7 @@ TextEditingController deliveryNbCustomersController = TextEditingController();
 String Id = "";
 String Nb_Customers = "";
 String Status = "";
-List<String> list = <String>['Available', 'Completed'];
+List<String> list = <String>['available', 'completed'];
 
 class Edit_Delivery extends StatelessWidget {
   int number = 0;

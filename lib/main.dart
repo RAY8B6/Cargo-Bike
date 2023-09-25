@@ -1,7 +1,7 @@
 // ignore_for_file: library_private_types_in_public_api
 
 import 'package:another_flutter_splash_screen/another_flutter_splash_screen.dart';
-import 'package:application_cargo/screens/dashboard_screen.dart';
+//import 'package:application_cargo/screens/dashboard_screen.dart';
 import 'package:application_cargo/screens/users/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -164,8 +164,7 @@ class SplashScreen extends StatelessWidget {
           ],
         ),
       ),
-      defaultNextScreen:
-          (screenToDisplay == "login") ? LoginScreen() : DashboardScreen(),
+      defaultNextScreen: LoginScreen(),
     );
   }
 }
