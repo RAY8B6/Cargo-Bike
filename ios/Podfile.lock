@@ -33,7 +33,6 @@ PODS:
     - Flutter
     - Polyline
     - Tangram-es
-    - Yams
   - geolocator_apple (1.2.0):
     - Flutter
   - google_maps_flutter_ios (0.0.1):
@@ -70,7 +69,6 @@ PODS:
   - Tangram-es (0.17.1)
   - url_launcher_ios (0.0.1):
     - Flutter
-  - Yams (5.0.6)
 
 DEPENDENCIES:
   - app_links (from `.symlinks/plugins/app_links/ios`)
@@ -98,7 +96,6 @@ SPEC REPOS:
     - Polyline
     - PromisesObjC
     - Tangram-es
-    - Yams
 
 EXTERNAL SOURCES:
   app_links:
@@ -133,7 +130,7 @@ SPEC CHECKSUMS:
   FirebaseCore: d027ff503d37edb78db98429b11f580a24a7df2a
   FirebaseCoreInternal: 9e46c82a14a3b3a25be4e1e151ce6d21536b89c0
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
-  flutter_osm_plugin: a661df71d2a3d1698ee410dd2272c8536f9e46f4
+  flutter_osm_plugin: f06ae1e854af57270c61ae27bdb8a386cfd4afa5
   geolocator_apple: cc556e6844d508c95df1e87e3ea6fa4e58c50401
   google_maps_flutter_ios: abdac20d6ce8931f6ebc5f46616df241bfaa2cfd
   GoogleMaps: 032f676450ba0779bd8ce16840690915f84e57ac
@@ -145,7 +142,6 @@ SPEC CHECKSUMS:
   PromisesObjC: 09985d6d70fbe7878040aa746d78236e6946d2ef
   Tangram-es: 628b634f7fc09d2217469b9914de00d9de49ff9d
   url_launcher_ios: 08a3dfac5fb39e8759aeb0abbd5d9480f30fc8b4
-  Yams: e10dae147f517ed57ecae37c5e8681bdf8fcab65
 
 PODFILE CHECKSUM: a57f30d18f102dd3ce366b1d62a55ecbef2158e5
 

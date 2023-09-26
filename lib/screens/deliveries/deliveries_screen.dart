@@ -121,7 +121,7 @@ class _DeliveryPageState extends State<DeliveryPage> {
                     itemCount: deliveries.length,
                     itemBuilder: ((context, index) {
                       final delivery = deliveries[index];
-                      if (delivery['status'] == "Available" &&
+                      if (delivery['status'] == "available" &&
                           delivery.isNotEmpty) {
                         return Column(
                           children: [
@@ -165,6 +165,8 @@ class _DeliveryPageState extends State<DeliveryPage> {
                                             FloatingActionButton(
                                                 heroTag: null,
                                                 onPressed: () {
+                                                  debugPrint("index : " +
+                                                      index.toString());
                                                   Navigator.of(context).push(
                                                       MaterialPageRoute(
                                                           builder: (context) =>
@@ -172,8 +174,8 @@ class _DeliveryPageState extends State<DeliveryPage> {
                                                                   title: "Map",
                                                                   points:
                                                                       points,
-                                                                  idLiv: delivery[
-                                                                      'id'])));
+                                                                  idLiv:
+                                                                      index)));
                                                 },
                                                 child: Icon(
                                                     Icons.play_arrow_rounded)),
@@ -306,24 +308,27 @@ class _DeliveryPageState extends State<DeliveryPage> {
                   color: Theme.of(context).colorScheme.onSecondary,
                   child: Column(
                     children: [
-                      OutlinedButton(
-                        onPressed: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => DeliveryMap(
-                                  title: "Map",
-                                  points: points,
-                                  idLiv: _selectedIndex)));
-                        },
-                        child: const Text(
-                          "Start Delivery",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                            fontStyle: FontStyle.normal,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 10.0),
+                      //OutlinedButton(
+                      //  onPressed: () {
+                      //    debugPrint(
+                      //        "selected index : " + _selectedIndex.toString());
+//
+                      //    Navigator.of(context).push(MaterialPageRoute(
+                      //        builder: (context) => DeliveryMap(
+                      //            title: "Map",
+                      //            points: points,
+                      //            idLiv: _selectedIndex)));
+                      //  },
+                      //  child: const Text(
+                      //    "Start Delivery",
+                      //    style: TextStyle(
+                      //      fontSize: 16,
+                      //      fontWeight: FontWeight.w700,
+                      //      fontStyle: FontStyle.normal,
+                      //    ),
+                      //  ),
+                      //),
+                      //const SizedBox(height: 10.0),
                       if (permissions == true)
                         OutlinedButton(
                           onPressed: () {
