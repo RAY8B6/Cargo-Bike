@@ -1,35 +1,92 @@
 // ignore_for_file: library_private_types_in_public_api
 
-import 'package:application_cargo/RegisterScreen.dart';
-import 'package:application_cargo/dashboard.dart';
-import 'package:application_cargo/forgot_password.dart';
+import 'package:application_cargo/screens/dashboard_screen.dart';
+import 'package:application_cargo/screens/splash_screen.dart';
+//import 'package:application_cargo/screens/dashboard_screen.dart';
+import 'package:application_cargo/screens/users/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-//import 'package:supabase_flutter/supabase_flutter.dart';
-
-//import 'package:application_cargo/map/home_map.dart';
+import 'globals/color.dart' as color;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  /*await dotenv.load(fileName: ".env");
+
+  await Supabase.initialize(
+      url: dotenv.env['SUPABASE_URL'].toString(),
+      anonKey: dotenv.env['SERVICE_KEY'].toString());*/
 
   await Supabase.initialize(
       url: "https://eizvcrbyrkfwzqeobqwm.supabase.co",
       anonKey:
           "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVpenZjcmJ5cmtmd3pxZW9icXdtIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NzM5NjEzODksImV4cCI6MTk4OTUzNzM4OX0.aTojsRh_3iNN4IN_6VAOy8rfS7IHKmxxBuC06G6LzkE");
-
   runApp(const MyApp());
 }
 
 final supabase = Supabase.instance.client;
+
+String screenToDisplay = "";
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
+      title: "B-MoveOn",
+      theme: ThemeData(
+          useMaterial3: true,
+          colorScheme: ColorScheme.fromSeed(
+              seedColor: color.appColor(), brightness: Brightness.light),
+          elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ElevatedButton.styleFrom(
+                textStyle: TextStyle(fontWeight: FontWeight.w400, fontSize: 15),
+                backgroundColor: color.appColor(),
+                foregroundColor: Colors.white,
+                minimumSize: Size(130, 25),
+                padding: EdgeInsets.all(15)),
+          ),
+          outlinedButtonTheme: OutlinedButtonThemeData(
+            style: OutlinedButton.styleFrom(
+              backgroundColor: Colors.white,
+              foregroundColor: color.appColor(),
+              fixedSize: Size(250, 25),
+              side: BorderSide(color: color.appColor()),
+            ),
+          ),
+          iconTheme: IconThemeData(color: color.appColor()),
+          cardTheme: CardTheme(
+            elevation: 2,
+            color: Theme.of(context).colorScheme.onSecondary,
+          ),
+          textButtonTheme: TextButtonThemeData(
+            style: TextButton.styleFrom(padding: EdgeInsets.zero),
+          ),
+          inputDecorationTheme: InputDecorationTheme(
+              hintStyle: TextStyle(
+                  color: color.appColor().withOpacity(0.7),
+                  fontWeight: FontWeight.w400,
+                  fontSize: 15),
+              labelStyle: TextStyle(color: color.appColor(), fontSize: 15)),
+          iconButtonTheme: IconButtonThemeData(
+            style: IconButton.styleFrom(foregroundColor: Colors.white),
+          ),
+          floatingActionButtonTheme: FloatingActionButtonThemeData(
+              foregroundColor: Colors.white,
+              backgroundColor: color.appColor(),
+              sizeConstraints: BoxConstraints(minWidth: 25, minHeight: 25),
+              iconSize: 17,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(60))),
+          appBarTheme: AppBarTheme(
+              backgroundColor: color.appColor().withOpacity(0.75),
+              titleTextStyle: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w400,
+                  fontSize: 20))),
       debugShowCheckedModeBanner: false,
-      home: HomePage(),
+      home: SplashScreen(),
     );
   }
 }
@@ -56,9 +113,12 @@ class _HomePageState extends State<HomePage> {
 
     final session = supabase.auth.currentSession;
     if (session != null) {
+      debugPrint("session not null");
       Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => const DashboardScreen()));
     } else {
+      debugPrint("session null");
+
       Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => const LoginScreen()));
     }
@@ -68,193 +128,6 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return const Scaffold(
       body: Center(child: CircularProgressIndicator()),
-    );
-  }
-}
-
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
-
-  @override
-  _LoginScreenState createState() => _LoginScreenState();
-}
-
-class _LoginScreenState extends State<LoginScreen> {
-  //Login function
-  static Future<bool> loginUsingEmailPassword(
-      {required String email,
-      required String password,
-      required BuildContext context}) async {
-    final supabase = Supabase.instance.client;
-    bool login = false;
-    try {
-      await supabase.auth.signInWithPassword(email: email, password: password);
-      login = true;
-    } on AuthException catch (e) {
-      if (e.message == "user-not-found") {
-        showDialog<String>(
-          context: context,
-          builder: (BuildContext context) => AlertDialog(
-            title: const Text("Error"),
-            content: const Text("Incorrect email or password"),
-            actions: [
-              TextButton(
-                  onPressed: () => Navigator.pop(context, "Ok"),
-                  child: const Text("Ok"))
-            ],
-          ),
-        );
-      }
-      if (e.message == "wrong-password") {
-        showDialog<String>(
-          context: context,
-          builder: (BuildContext context) => AlertDialog(
-            title: const Text("Error"),
-            content: const Text("Incorrect email or password"),
-            actions: [
-              TextButton(
-                  onPressed: () => Navigator.pop(context, "Ok"),
-                  child: const Text("Ok"))
-            ],
-          ),
-        );
-      }
-      print(e.message);
-    }
-
-    return login;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    //create the textfiled controller
-    TextEditingController emailController = TextEditingController();
-    TextEditingController passwordController = TextEditingController();
-
-    return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(32),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                "B-MoveOn",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 28.0,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const Text(
-                "Login page",
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 44.0,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(
-                height: 44.0,
-              ),
-              TextField(
-                controller: emailController,
-                keyboardType: TextInputType.name,
-                decoration: const InputDecoration(
-                  hintText: "Email",
-                  prefixIcon: Icon(Icons.email, color: Colors.black),
-                ),
-              ),
-              const SizedBox(
-                height: 26.0,
-              ),
-              TextField(
-                controller: passwordController,
-                obscureText: true,
-                decoration: const InputDecoration(
-                  hintText: "Password",
-                  prefixIcon: Icon(Icons.lock, color: Colors.black),
-                ),
-              ),
-              const SizedBox(
-                height: 12.0,
-              ),
-              GestureDetector(
-                  child: const Text(
-                    "Forgot Password ?",
-                    textAlign: TextAlign.start,
-                    overflow: TextOverflow.clip,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontStyle: FontStyle.normal,
-                      fontSize: 14,
-                      color: Color(0xff3a57e8),
-                    ),
-                  ),
-                  onTap: () => Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(
-                          builder: (context) => ForgotPasswordScreen()))),
-              const SizedBox(
-                height: 70.0,
-              ),
-              SizedBox(
-                width: double.infinity,
-                child: RawMaterialButton(
-                  fillColor: Color(0xff3a57e8),
-                  elevation: 0.0,
-                  padding: const EdgeInsets.symmetric(vertical: 10.0),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.0),
-                  ),
-                  onPressed: () async {
-                    bool login = await loginUsingEmailPassword(
-                        email: emailController.text,
-                        password: passwordController.text,
-                        context: context);
-                    print(login);
-                    if (login == true) {
-                      Navigator.of(context).pushReplacement(MaterialPageRoute(
-                          builder: (context) => DashboardScreen()));
-                    }
-                  },
-                  child: const Text(
-                    "Login",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18.0,
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(
-                width: double.infinity,
-                child: RawMaterialButton(
-                  fillColor: Color(0xff3a57e8),
-                  elevation: 0.0,
-                  padding: const EdgeInsets.symmetric(vertical: 10.0),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.0),
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pushReplacement(MaterialPageRoute(
-                        builder: (context) => RegisterScreen()));
-                  },
-                  child: const Text(
-                    "Register",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18.0,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }
