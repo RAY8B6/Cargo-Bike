@@ -189,7 +189,7 @@ class _DeliveryMap extends State<DeliveryMap> {
                   )),
             ],
           )),
-          SearchBarWidget()
+          //SearchBarWidget()
         ],
       ),
     );

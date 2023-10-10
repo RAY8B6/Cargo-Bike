@@ -1,7 +1,6 @@
 // ignore_for_file: library_private_types_in_public_api
 
 import 'package:application_cargo/maps/delivery_map.dart';
-import 'package:application_cargo/maps/searchMap/search_map.dart';
 import 'package:application_cargo/screens/settings_screen.dart';
 import 'package:application_cargo/screens/users/login_screen.dart';
 import 'package:flutter/material.dart';
@@ -64,8 +63,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         )));
               }
               debugPrint("MAAAAAAAP");
-              Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => const SearchMap()));
+              //Navigator.of(context).push(
+              //    MaterialPageRoute(builder: (context) => const SearchMap()));
             }
             if (index == 1) {
               // ignore: use_build_context_synchronously
@@ -149,7 +148,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               crossAxisCount: 2,
               padding: const EdgeInsets.all(2),
               children: [
-                makeDashboardItem("Map", "assets/map.png", 0),
+                //makeDashboardItem("Map", "assets/map.png", 0),
                 makeDashboardItem("Deliveries", "assets/delivery.png", 1),
                 //makeDashboardItem(
                 //"Turn On/Off Motor", "assets/power_button.png", 2),

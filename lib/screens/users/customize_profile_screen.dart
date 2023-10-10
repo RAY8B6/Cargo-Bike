@@ -97,150 +97,150 @@ class _EditProfilePageState extends State<EditProfilePage> {
       body: Card(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-          child: GestureDetector(
+          child: /*GestureDetector(
             onTap: () {
               FocusScope.of(context).unfocus();
             },
-            child: ListView(
-              children: [
-                const SizedBox(
-                  height: 15,
-                ),
-                Center(
-                  child: Stack(
-                    children: [
-                      Container(
-                        width: 130,
-                        height: 130,
-                        decoration: BoxDecoration(
-                            border: Border.all(
-                                width: 4,
-                                color:
-                                    Theme.of(context).scaffoldBackgroundColor),
-                            boxShadow: [
-                              BoxShadow(
-                                  spreadRadius: 2,
-                                  blurRadius: 10,
-                                  color: Colors.black.withOpacity(0.1),
-                                  offset: Offset(0, 10))
-                            ],
-                            shape: BoxShape.circle,
-                            image: DecorationImage(
-                                fit: BoxFit.cover,
-                                image: NetworkImage(
-                                  profilePicture,
-                                ))),
-                      ),
-                      Positioned(
-                          bottom: 0,
-                          right: 0,
-                          child: Container(
-                            height: 40,
-                            width: 40,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                width: 4,
-                                color: Theme.of(context).colorScheme.secondary,
-                              ),
-                              color: Colors.green,
-                            ),
-                            child: const Icon(
-                              Icons.edit,
-                              color: Colors.white,
-                            ),
-                          )),
-                    ],
-                  ),
-                ),
-                const SizedBox(
-                  height: 35,
-                ),
-                TextField(
-                  controller: fnameController,
-                  decoration: InputDecoration(
-                    contentPadding: EdgeInsets.only(bottom: 3),
-                    labelText: 'First name',
-                    floatingLabelBehavior: FloatingLabelBehavior.always,
-                    hintText: firstName,
-                  ),
-                ),
-                const SizedBox(
-                  height: 15,
-                ),
-                TextFormField(
-                  controller: lnameController,
-                  decoration: InputDecoration(
-                    contentPadding: EdgeInsets.only(bottom: 3),
-                    labelText: 'Last name',
-                    floatingLabelBehavior: FloatingLabelBehavior.always,
-                    hintText: lastName,
-                  ),
-                ),
-                const SizedBox(
-                  height: 15,
-                ),
-                TextFormField(
-                  controller: emailController,
-                  decoration: InputDecoration(
-                    contentPadding: EdgeInsets.only(bottom: 3),
-                    labelText: 'Email',
-                    floatingLabelBehavior: FloatingLabelBehavior.always,
-                    hintText: email,
-                  ),
-                ),
-                const SizedBox(
-                  height: 15,
-                ),
-                const SizedBox(
-                  height: 35,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            child:*/
+              ListView(
+            children: [
+              const SizedBox(
+                height: 15,
+              ),
+              Center(
+                child: Stack(
                   children: [
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: const Text(
-                        "Cancel",
-                      ),
+                    Container(
+                      width: 130,
+                      height: 130,
+                      decoration: BoxDecoration(
+                          border: Border.all(
+                              width: 4,
+                              color: Theme.of(context).scaffoldBackgroundColor),
+                          boxShadow: [
+                            BoxShadow(
+                                spreadRadius: 2,
+                                blurRadius: 10,
+                                color: Colors.black.withOpacity(0.1),
+                                offset: Offset(0, 10))
+                          ],
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                              fit: BoxFit.cover,
+                              image: NetworkImage(
+                                profilePicture,
+                              ))),
                     ),
-                    ElevatedButton(
-                      onPressed: () {
-                        if (fnameController.text.isEmpty &&
-                            lnameController.text.isEmpty &&
-                            emailController.text.isEmpty) {
-                        } else
-                          updateUserData(context: context);
-
-                        if (isUpdated == true) {
-                          showDialog<String>(
-                            context: context,
-                            builder: (BuildContext context) => AlertDialog(
-                              title: const Text("Success"),
-                              content: const Text("Profile updated !"),
-                              actions: [
-                                TextButton(
-                                    onPressed: () async {
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: const Text("Ok"))
-                              ],
-                            ),
-                          );
-                        } else
-                          null;
-                      },
-                      child: const Text(
-                        "Save",
-                      ),
-                    )
+                    //Positioned(
+                    //    bottom: 0,
+                    //    right: 0,
+                    //    child: Container(
+                    //      height: 40,
+                    //      width: 40,
+                    //      decoration: BoxDecoration(
+                    //        shape: BoxShape.circle,
+                    //        border: Border.all(
+                    //          width: 4,
+                    //          color: Theme.of(context).colorScheme.secondary,
+                    //        ),
+                    //        color: Colors.green,
+                    //      ),
+                    //      child: const Icon(
+                    //        Icons.edit,
+                    //        color: Colors.white,
+                    //      ),
+                    //    )),
                   ],
-                )
-              ],
-            ),
+                ),
+              ),
+              const SizedBox(
+                height: 35,
+              ),
+              TextField(
+                controller: fnameController,
+                decoration: InputDecoration(
+                  contentPadding: EdgeInsets.only(bottom: 3),
+                  labelText: 'First name',
+                  floatingLabelBehavior: FloatingLabelBehavior.always,
+                  hintText: firstName,
+                ),
+              ),
+              const SizedBox(
+                height: 15,
+              ),
+              TextFormField(
+                controller: lnameController,
+                decoration: InputDecoration(
+                  contentPadding: EdgeInsets.only(bottom: 3),
+                  labelText: 'Last name',
+                  floatingLabelBehavior: FloatingLabelBehavior.always,
+                  hintText: lastName,
+                ),
+              ),
+              const SizedBox(
+                height: 15,
+              ),
+              TextFormField(
+                controller: emailController,
+                decoration: InputDecoration(
+                  contentPadding: EdgeInsets.only(bottom: 3),
+                  labelText: 'Email',
+                  floatingLabelBehavior: FloatingLabelBehavior.always,
+                  hintText: email,
+                ),
+              ),
+              const SizedBox(
+                height: 15,
+              ),
+              const SizedBox(
+                height: 35,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text(
+                      "Cancel",
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      if (fnameController.text.isEmpty &&
+                          lnameController.text.isEmpty &&
+                          emailController.text.isEmpty) {
+                      } else
+                        updateUserData(context: context);
+
+                      if (isUpdated == true) {
+                        showDialog<String>(
+                          context: context,
+                          builder: (BuildContext context) => AlertDialog(
+                            title: const Text("Success"),
+                            content: const Text("Profile updated !"),
+                            actions: [
+                              TextButton(
+                                  onPressed: () async {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text("Ok"))
+                            ],
+                          ),
+                        );
+                      } else
+                        null;
+                    },
+                    child: const Text(
+                      "Save",
+                    ),
+                  )
+                ],
+              )
+            ],
           ),
+          //),
         ),
       ),
     );

@@ -56,6 +56,7 @@ dependencies:
   animated_background: ^2.0.0
   colorful_background: ^0.0.4
   geolocator: ^10.1.0
+  image_picker: ^1.0.4
   
 flutter_icons:
   image_path: "assets/b-moveon.png" 

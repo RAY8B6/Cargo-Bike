@@ -1,6 +1,7 @@
 // ignore_for_file: library_private_types_in_public_api
 
 import 'package:application_cargo/screens/dashboard_screen.dart';
+import 'package:application_cargo/screens/splash_screen.dart';
 //import 'package:application_cargo/screens/splash_screen.dart';
 //import 'package:application_cargo/screens/dashboard_screen.dart';
 import 'package:application_cargo/screens/users/login_screen.dart';

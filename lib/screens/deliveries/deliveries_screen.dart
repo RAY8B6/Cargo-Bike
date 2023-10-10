@@ -162,23 +162,23 @@ class _DeliveryPageState extends State<DeliveryPage> {
                                           mainAxisAlignment:
                                               MainAxisAlignment.end,
                                           children: [
-                                            FloatingActionButton(
-                                                heroTag: null,
-                                                onPressed: () {
-                                                  debugPrint("index : " +
-                                                      index.toString());
-                                                  Navigator.of(context).push(
-                                                      MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              DeliveryMap(
-                                                                  title: "Map",
-                                                                  points:
-                                                                      points,
-                                                                  idLiv:
-                                                                      index)));
-                                                },
-                                                child: Icon(
-                                                    Icons.play_arrow_rounded)),
+                                            //  FloatingActionButton(
+                                            //      heroTag: null,
+                                            //      onPressed: () {
+                                            //        debugPrint("index : " +
+                                            //            index.toString());
+                                            //        Navigator.of(context).push(
+                                            //            MaterialPageRoute(
+                                            //                builder: (context) =>
+                                            //                    DeliveryMap(
+                                            //                        title: "Map",
+                                            //                        points:
+                                            //                            points,
+                                            //                        idLiv:
+                                            //                            index)));
+                                            //      },
+                                            //      child: Icon(
+                                            //          Icons.play_arrow_rounded)),
                                             FloatingActionButton(
                                                 heroTag: null,
                                                 onPressed: () {
@@ -308,27 +308,26 @@ class _DeliveryPageState extends State<DeliveryPage> {
                   color: Theme.of(context).colorScheme.onSecondary,
                   child: Column(
                     children: [
-                      //OutlinedButton(
-                      //  onPressed: () {
-                      //    debugPrint(
-                      //        "selected index : " + _selectedIndex.toString());
-//
-                      //    Navigator.of(context).push(MaterialPageRoute(
-                      //        builder: (context) => DeliveryMap(
-                      //            title: "Map",
-                      //            points: points,
-                      //            idLiv: _selectedIndex)));
-                      //  },
-                      //  child: const Text(
-                      //    "Start Delivery",
-                      //    style: TextStyle(
-                      //      fontSize: 16,
-                      //      fontWeight: FontWeight.w700,
-                      //      fontStyle: FontStyle.normal,
-                      //    ),
-                      //  ),
-                      //),
-                      //const SizedBox(height: 10.0),
+                      OutlinedButton(
+                        onPressed: () {
+                          debugPrint(
+                              "selected index : " + _selectedIndex.toString());
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => DeliveryMap(
+                                  title: "Map",
+                                  points: points,
+                                  idLiv: _selectedIndex)));
+                        },
+                        child: const Text(
+                          "Start Delivery",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                            fontStyle: FontStyle.normal,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 10.0),
                       if (permissions == true)
                         OutlinedButton(
                           onPressed: () {
